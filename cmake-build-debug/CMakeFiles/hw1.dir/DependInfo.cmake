@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/rond/OneDrive - Technion/רון ענן/טכניון/סמסטר ג/מבני נתונים/hw1/main.cpp" "/Users/rond/OneDrive - Technion/רון ענן/טכניון/סמסטר ג/מבני נתונים/hw1/cmake-build-debug/CMakeFiles/hw1.dir/main.cpp.o"
+  "C:/Users/user/Desktop/Data_hw1/main.cpp" "C:/Users/user/Desktop/Data_hw1/cmake-build-debug/CMakeFiles/hw1.dir/main.cpp.obj"
   )
-set(CMAKE_CXX_COMPILER_ID "AppleClang")
+set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
