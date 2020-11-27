@@ -9,9 +9,9 @@
         AVLNode(const T& value) : data(value), left(NULL), right(NULL), parent(NULL) {}
         ~AVLNode() {}
         const T&  get_value() const { return data; }
-        void      set_left(AVLNode* left) { left = left; }
-        void      set_right(AVLNode* right) { right = right; }
-        void      set_parent(AVLNode* parent) { parent = parent; }
+        void      set_left(AVLNode* left) { this->left = left; }
+        void      set_right(AVLNode* right) { this->right = right; }
+        void      set_parent(AVLNode* parent) { this->parent = parent; }
         AVLNode*  get_parent() const { return parent; }
         AVLNode*  get_right() const { return right; }
         AVLNode*  get_left() const { return left; }
