@@ -32,8 +32,8 @@
         AVLTree() : my_root(NULL) {}
         ~AVLTree();
 
-        bool Insert(const T& value);
-        AVLNode<T>* GetRoot() const { return my_root; }
+        bool insert_value(const T& value);
+        AVLNode<T>* get_root() const { return my_root; }
         AVLNode<T>* find_value(AVLNode<T>* root, const T& value) const;
 
         int  get_tree_height(AVLNode<T>* root) const;
@@ -67,7 +67,7 @@
     }
 
     template <class T>
-    bool AVLTree<T>::Insert(const T& value) {
+    bool AVLTree<T>::insert_value(const T& value) {
         AVLNode<T>* new_node = new AVLNode<T>(value);
 
         if(!new_node)
@@ -77,7 +77,6 @@
             my_root = new_node;
         else
             insert_node(my_root, new_node);
-
         return false;
     }
 
@@ -93,7 +92,7 @@
             }
         }
         else {
-            if( root->get_right() ) // If there is a right child, keep going right.
+            if(root->get_right()) // If there is a right child, keep going right.
                 insert_node(root->get_right(), ins);
             else {
                 root->set_right(ins);
@@ -103,13 +102,13 @@
 
         // Balance the tree.
         int balance = get_balance_factor(root);
-        if( balance > 1 ) { // Left tree is unbalanced
+        if(balance > 1) { // Left tree is unbalanced
             if(get_balance_factor( root->get_left() ) < 0) // LR rotation needed.
                 rotate_left(root->get_left());
             rotate_right(root);
         }
         else if(balance < -1) { // Right tree is unbalanced.
-            if( get_balance_factor( root->get_right() ) > 0 ) // RL rotation needed.
+            if(get_balance_factor( root->get_right() ) > 0) // RL rotation needed.
                 rotate_right( root->get_right() );
             rotate_left(root);
         }
@@ -126,7 +125,7 @@
 
     template <class T>
     AVLNode<T>* AVLTree<T>::find_value(AVLNode<T>* root, const T& value) const {
-        if( root ) {
+        if(root) {
             if( root->get_value() == value )
                 return root;
             else if( value < root->get_value() )
@@ -154,9 +153,8 @@
     template <class T>
     int  AVLTree<T>::get_balance_factor(AVLNode<T>* current_node) const {
         int balance = 0;
-        if(current_node) {
+        if(current_node)
             balance = get_tree_height(current_node->get_left()) - get_tree_height(current_node->get_right());
-        }
         return balance;
     }
 
@@ -171,12 +169,10 @@
             new_root->set_parent(NULL);
         }
         else {
-            if(current_node->get_parent()->get_left() == current_node) {
+            if(current_node->get_parent()->get_left() == current_node)
                 current_node->get_parent()->set_left(new_root);
-            }
-            else {
+            else
                 current_node->get_parent()->set_right(new_root);
-            }
             new_root->set_parent(current_node->get_parent());
         }
         current_node->set_parent(new_root);
@@ -190,17 +186,15 @@
         new_root->set_right(current_node);
 
         // Adjust tree
-        if( current_node->get_parent() == NULL ) {
+        if(current_node->get_parent() == NULL) {
             my_root = new_root;
             new_root->set_parent(NULL);
         }
         else {
-            if( current_node->get_parent()->get_left() == current_node ) {
+            if(current_node->get_parent()->get_left() == current_node)
                 current_node->get_parent()->set_left(new_root);
-            }
-            else {
+            else
                 current_node->get_parent()->set_right(new_root);
-            }
             new_root->set_parent(current_node->get_parent());
         }
         current_node->set_parent(new_root);
