@@ -42,6 +42,7 @@ static int max(int a, int b){
         ~AVLTree();
 
         bool insert_value(const T& value);
+        bool delete_value(const T& value);
         AVLNode<T>* get_root() const { return my_root; }
         AVLNode<T>* find_value(AVLNode<T>* root, const T& value) const;
 
@@ -62,98 +63,98 @@ static int max(int a, int b){
         AVLNode<T>* my_root;
     };
 
-    template <class T>
-    AVLTree<T>::~AVLTree() {
-        if(my_root)
-            delete_node(my_root);
+template <class T>
+AVLTree<T>::~AVLTree() {
+    if(my_root)
+        delete_node(my_root);
+}
+
+template <class T>
+void AVLTree<T>::delete_node(AVLNode<T>* node) {
+    if(node) {
+        delete_node(node->get_left());
+        delete_node(node->get_right());
+        delete node;
     }
+}
 
-    template <class T>
-    void AVLTree<T>::delete_node(AVLNode<T>* node) {
-        if(node) {
-            delete_node(node->get_left());
-            delete_node(node->get_right());
-            delete node;
-        }
-    }
+template <class T>
+bool AVLTree<T>::insert_value(const T& value) {
+    AVLNode<T>* new_node = new AVLNode<T>(value);
 
-    template <class T>
-    bool AVLTree<T>::insert_value(const T& value) {
-        AVLNode<T>* new_node = new AVLNode<T>(value);
+    if(!new_node)
+        return true; // Out of memory
 
-        if(!new_node)
-            return true; // Out of memory
+    if(!my_root) // Creating a root.
+        my_root = new_node;
+    else
+        insert_node(my_root, new_node);
+    return false;
+}
 
-        if(!my_root) // Creating a root.
-            my_root = new_node;
-        else
-            insert_node(my_root, new_node);
-        return false;
-    }
+template <class T>
+void AVLTree<T>::insert_node(AVLNode<T>* root, AVLNode<T>* ins) {
 
-    template <class T>
-    void AVLTree<T>::insert_node(AVLNode<T>* root, AVLNode<T>* ins) {
-
-        if( ins->get_value() <= root->get_value() ) {
-            if(root->get_left()) // If there is a left child, keep going left.
-                insert_node(root->get_left(), ins);
-            else {
-                root->set_left(ins);
-                ins->set_parent(root);
-            }
-        }
+    if( ins->get_value() <= root->get_value() ) {
+        if(root->get_left()) // If there is a left child, keep going left.
+            insert_node(root->get_left(), ins);
         else {
-            if(root->get_right()) // If there is a right child, keep going right.
-                insert_node(root->get_right(), ins);
-            else {
-                root->set_right(ins);
-                ins->set_parent(root);
-            }
+            root->set_left(ins);
+            ins->set_parent(root);
         }
-
-        // Balance the tree.
-        int balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
-        root->set_balanced_factor(balance);
-        if(balance > 1) { // Left tree is unbalanced
-            if(get_balance_factor( root->get_left() ) < 0) // LR rotation needed.
-                rotate_left(root->get_left());
-            rotate_right(root);
-        }
-        else if(balance < -1) { // Right tree is unbalanced.
-            if(get_balance_factor( root->get_right() ) > 0) // RL rotation needed.
-                rotate_right( root->get_right() );
-            rotate_left(root);
-        }
-        root->set_height(max(get_tree_height(root->get_left()),get_tree_height(root->get_right())) + 1);
     }
-
-    template <class T>
-    void AVLTree<T>::inorder(AVLNode<T>* root) const {
-        if(root) {
-            inorder(root->get_left());
-            root->print_node();
-            inorder(root->get_right());
+    else {
+        if(root->get_right()) // If there is a right child, keep going right.
+            insert_node(root->get_right(), ins);
+        else {
+            root->set_right(ins);
+            ins->set_parent(root);
         }
     }
 
-    template <class T>
-    AVLNode<T>* AVLTree<T>::find_value(AVLNode<T>* root, const T& value) const {
-        if(root) {
-            if( root->get_value() == value )
-                return root;
-            else if( value < root->get_value() )
-                return find_value( root->get_left(), value );
-            else
-                return find_value( root->get_right(), value );
-        }
-        return NULL;
+    // Balance the tree.
+    int balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
+    root->set_balanced_factor(balance);
+    if(balance > 1) { // Left tree is unbalanced
+        if(get_balance_factor( root->get_left() ) < 0) // LR rotation needed.
+            rotate_left(root->get_left());
+        rotate_right(root);
     }
+    else if(balance < -1) { // Right tree is unbalanced.
+        if(get_balance_factor( root->get_right() ) > 0) // RL rotation needed.
+            rotate_right( root->get_right() );
+        rotate_left(root);
+    }
+    root->set_height(max(get_tree_height(root->get_left()),get_tree_height(root->get_right())) + 1);
+}
 
-    template <class T>
-    int AVLTree<T>::get_tree_height(AVLNode<T>* root) const {
-        if(root == NULL)
-            return -1;
-        return root->get_height();
+template <class T>
+void AVLTree<T>::inorder(AVLNode<T>* root) const {
+    if(root) {
+        inorder(root->get_left());
+        root->print_node();
+        inorder(root->get_right());
+    }
+}
+
+template <class T>
+AVLNode<T>* AVLTree<T>::find_value(AVLNode<T>* root, const T& value) const {
+    if(root) {
+        if( root->get_value() == value )
+            return root;
+        else if( value < root->get_value() )
+            return find_value( root->get_left(), value );
+        else
+            return find_value( root->get_right(), value );
+    }
+    return NULL;
+}
+
+template <class T>
+int AVLTree<T>::get_tree_height(AVLNode<T>* root) const {
+    if(root == NULL)
+        return -1;
+    return root->get_height();
 //        int height = -1;
 //        if(root) {
 //            int left  = get_tree_height(root->get_left());
@@ -164,57 +165,77 @@ static int max(int a, int b){
 //                height = 1 + right;
 //        }
 //        return height;
-    }
+}
 
-    template <class T>
-    int  AVLTree<T>::get_balance_factor(AVLNode<T>* current_node) const {
-        return current_node->get_balanced_factor();
+template <class T>
+int  AVLTree<T>::get_balance_factor(AVLNode<T>* current_node) const {
+    return current_node->get_balanced_factor();
 //        int balance = 0;
 //        if(current_node)
 //            balance = get_tree_height(current_node->get_left()) - get_tree_height(current_node->get_right());
 //        return balance;
+}
+
+template <class T>
+void AVLTree<T>::rotate_left (AVLNode<T>* current_node) {
+    AVLNode<T>* new_root = current_node->get_right();
+    current_node->set_right(new_root->get_left());
+    new_root->set_left(current_node);
+
+    if(current_node->get_parent() == NULL) {
+        my_root = new_root;
+        new_root->set_parent(NULL);
     }
-
-    template <class T>
-    void AVLTree<T>::rotate_left (AVLNode<T>* current_node) {
-        AVLNode<T>* new_root = current_node->get_right();
-        current_node->set_right(new_root->get_left());
-        new_root->set_left(current_node);
-
-        if(current_node->get_parent() == NULL) {
-            my_root = new_root;
-            new_root->set_parent(NULL);
-        }
-        else {
-            if(current_node->get_parent()->get_left() == current_node)
-                current_node->get_parent()->set_left(new_root);
-            else
-                current_node->get_parent()->set_right(new_root);
-            new_root->set_parent(current_node->get_parent());
-        }
-        current_node->set_parent(new_root);
+    else {
+        if(current_node->get_parent()->get_left() == current_node)
+            current_node->get_parent()->set_left(new_root);
+        else
+            current_node->get_parent()->set_right(new_root);
+        new_root->set_parent(current_node->get_parent());
     }
+    current_node->set_parent(new_root);
+}
 
-    template <class T>
-    void AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
-        // Rotate node
-        AVLNode<T>* new_root = current_node->get_left();
-        current_node->set_left(new_root->get_right());
-        new_root->set_right(current_node);
+template <class T>
+void AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
+    // Rotate node
+    AVLNode<T>* new_root = current_node->get_left();
+    current_node->set_left(new_root->get_right());
+    new_root->set_right(current_node);
 
-        // Adjust tree
-        if(current_node->get_parent() == NULL) {
-            my_root = new_root;
-            new_root->set_parent(NULL);
-        }
-        else {
-            if(current_node->get_parent()->get_left() == current_node)
-                current_node->get_parent()->set_left(new_root);
-            else
-                current_node->get_parent()->set_right(new_root);
-            new_root->set_parent(current_node->get_parent());
-        }
-        current_node->set_parent(new_root);
+    // Adjust tree
+    if(current_node->get_parent() == NULL) {
+        my_root = new_root;
+        new_root->set_parent(NULL);
     }
+    else {
+        if(current_node->get_parent()->get_left() == current_node)
+            current_node->get_parent()->set_left(new_root);
+        else
+            current_node->get_parent()->set_right(new_root);
+        new_root->set_parent(current_node->get_parent());
+    }
+    current_node->set_parent(new_root);
+}
+
+template<class T>
+bool AVLTree<T>::delete_value(const T &value) {
+    AVLNode<T> *node = find_value(my_root,value);
+    AVLNode<T> *node_to_fix = node->get_parent(); //////////////לא התייחסתי לזה שהמוסר עצמו יכול להיות השורש
+    if(node == NULL)
+        return true; // value not exist in tree;
+    else if(node->get_left() == NULL && node->get_right() == NULL){
+        delete_node(node);
+        //node is leaf
+    }else if(node->get_left() == NULL && node->get_right() != NULL){
+//       (node->get_parent())
+        //node doesn't have left leaf
+    }else if(node->get_left() == NULL && node->get_right() != NULL){
+        // node doesn't have right leaf
+    }else if(node->get_left() != NULL && node->get_right() != NULL){
+        //node isn't a leaf at all
+    }
+    return false;
+}
 
 #endif // GENERIC_AVL_H
