@@ -3,10 +3,13 @@
 
 #include <iostream>
 
+static int max(int a, int b){
+    return (a > b) ? a : b;
+}
     template <class T>
     class AVLNode {
     public:
-        AVLNode(const T& value) : data(value), left(NULL), right(NULL), parent(NULL) {}
+        AVLNode(const T& value) : data(value), left(NULL), right(NULL), parent(NULL),height(0), balanced(0) {}
         ~AVLNode() {}
         const T&  get_value() const { return data; }
         void      set_left(AVLNode* left) { this->left = left; }
@@ -16,6 +19,10 @@
         AVLNode*  get_right() const { return right; }
         AVLNode*  get_left() const { return left; }
 
+        int get_balanced_factor(){return balanced;}
+        void set_balanced_factor(int new_balanced_factor){balanced = new_balanced_factor;}
+        int get_height(){return height;}
+        void set_height(int new_height){height = new_height;}
         void      print_node() const { std::cout << data << std::endl; }
 
     private:
@@ -24,6 +31,8 @@
         AVLNode* left;
         AVLNode* right;
         AVLNode* parent;
+        int height;
+        int balanced;
     };
 
     template <class T>
@@ -43,6 +52,8 @@
         void rotate_right(AVLNode<T>* root);
 
         void inorder (AVLNode<T>* root) const;
+
+
 
     private:
         void insert_node(AVLNode<T>* root, AVLNode<T>* ins);
@@ -101,7 +112,8 @@
         }
 
         // Balance the tree.
-        int balance = get_balance_factor(root);
+        int balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
+        root->set_balanced_factor(balance);
         if(balance > 1) { // Left tree is unbalanced
             if(get_balance_factor( root->get_left() ) < 0) // LR rotation needed.
                 rotate_left(root->get_left());
@@ -112,6 +124,7 @@
                 rotate_right( root->get_right() );
             rotate_left(root);
         }
+        root->set_height(max(get_tree_height(root->get_left()),get_tree_height(root->get_right())) + 1);
     }
 
     template <class T>
@@ -138,24 +151,28 @@
 
     template <class T>
     int AVLTree<T>::get_tree_height(AVLNode<T>* root) const {
-        int height = 0;
-        if(root) {
-            int left  = get_tree_height(root->get_left());
-            int right = get_tree_height(root->get_right());
-            if(left > right)
-                height = 1 + left;
-            else
-                height = 1 + right;
-        }
-        return height;
+        if(root == NULL)
+            return -1;
+        return root->get_height();
+//        int height = -1;
+//        if(root) {
+//            int left  = get_tree_height(root->get_left());
+//            int right = get_tree_height(root->get_right());
+//            if(left > right)
+//                height = 1 + left;
+//            else
+//                height = 1 + right;
+//        }
+//        return height;
     }
 
     template <class T>
     int  AVLTree<T>::get_balance_factor(AVLNode<T>* current_node) const {
-        int balance = 0;
-        if(current_node)
-            balance = get_tree_height(current_node->get_left()) - get_tree_height(current_node->get_right());
-        return balance;
+        return current_node->get_balanced_factor();
+//        int balance = 0;
+//        if(current_node)
+//            balance = get_tree_height(current_node->get_left()) - get_tree_height(current_node->get_right());
+//        return balance;
     }
 
     template <class T>
