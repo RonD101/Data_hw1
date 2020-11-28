@@ -12,8 +12,9 @@ int main() {
     new_tree.insert_value(3);
     new_tree.insert_value(6);
     new_tree.insert_value(7);
-    new_tree.delete_value(9);
-//    cout << new_tree.get_tree_height(new_tree.get_root()) << endl;
-//    new_tree.inorder(new_tree.get_root());
+    new_tree.in_order(new_tree.get_root());
+    new_tree.delete_value(new_tree.get_root(), 6);
+    cout << endl << "****" << endl;
+    new_tree.in_order(new_tree.get_root());
     return 0;
 }
