@@ -27,7 +27,7 @@ static int max(int a, int b){
         int get_balance_factor() { return balance_factor; }
         int get_height()  {
             if(this == nullptr)
-                return -1;
+                return 0;
             return height;
         }
 
@@ -235,18 +235,15 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
         root->set_left(delete_value(root->get_left(), value));
     else if(value > root->data)
         root->set_right(delete_value(root->get_right(), value));
-
-        // Element found
-        // With 2 children
-    else if(root->get_left() && root->get_right())
-    {
+    // Element found with 2 children
+    else if(root->get_left() && root->get_right()) {
+        // go right, and than all the way left.
         temp = find_min(root->get_right());
         root->data = temp->data;
         root->set_right(delete_value(root->get_right(), root->data));
     }
-        // With one or zero child
-    else
-    {
+    // With one or zero children.
+    else {
         temp = root;
         if(root->get_left() == nullptr)
             root = root->get_right();
@@ -261,28 +258,24 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
 
     // If node is unbalanced
     // If left node is deleted, right case
-    if((root->get_left()->get_height() - root->get_right()->get_height()) == 2)
-    {
+    if((root->get_left()->get_height() - root->get_right()->get_height()) == 2) {
         // right right case
         if((root->get_left()->get_left()->get_height() - root->get_left()->get_right()->get_height()) == 1)
             return rotate_left(root);
             // right left case
-        else
-        {
+        else {
             root->set_right(rotate_right(root->get_right()));
             return rotate_left(root);
         }
 
     }
-        // If right node is deleted, left case
-    else if((root->get_right()->get_height() - root->get_left()->get_height()) == 2)
-    {
+    // If right node is deleted, left case
+    else if((root->get_right()->get_height() - root->get_left()->get_height()) == 2) {
         // left left case
         if((root->get_right()->get_right()->get_height() - root->right->get_left()->get_height()) == 1)
             return rotate_right(root);
             // left right case
-        else
-        {
+        else {
             root->set_left(rotate_left(root->get_left()));
             return rotate_left(root);
         }
