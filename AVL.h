@@ -3,42 +3,39 @@
 
 #include <iostream>
 
-static int max(int a, int b){
+static int max(int a, int b) {
     return (a > b) ? a : b;
 }
 
-
-
-    template <class T>
-    class AVLNode {
+template <class T>
+class AVLNode {
     public:
-        explicit AVLNode(const T& value) : data(value), left(nullptr), right(nullptr), parent(nullptr),height(0), balance_factor(0) {}
+        explicit AVLNode(const T& value) : data(value), left(nullptr), right(nullptr), parent(nullptr), height(0), balance_factor(0) {}
         ~AVLNode() = default;
         const T& get_value() const { return data; }
-
         void set_balanced_factor(int new_balance_factor) { balance_factor = new_balance_factor; }
         void set_parent(AVLNode* new_parent) { this->parent = new_parent; }
         void set_right(AVLNode* new_right)   { this->right = new_right; }
         void set_left(AVLNode* new_left)     { this->left = new_left; }
-        void set_height(int new_height)      { height = new_height; }
+        void set_height(int new_height)      { this->height = new_height; }
 
         void print_node() const { std::cout << data << std::endl; }
 
         int get_balance_factor() { return balance_factor; }
-        int get_height()  {
+        int get_height() {
             if(this == nullptr)
-                return 0;
-            return height;
+                // should this be 0 or -1?
+                return -1;
+            return this->height;
         }
 
         AVLNode* get_parent() const { return parent; }
         AVLNode* get_right()  const { return right; }
         AVLNode* get_left()   const { return left; }
-
-    //private:
         T     data;
         AVLNode* left;
         AVLNode* right;
+    private:
         AVLNode* parent;
         int height;
         int balance_factor;
@@ -49,8 +46,7 @@ static int max(int a, int b){
     public:
         AVLTree() : my_root(nullptr) {}
         ~AVLTree();
-
-        AVLNode<T>* find_value(AVLNode<T>* root, const T& value, bool* side_flag = nullptr) const;
+        AVLNode<T>* find_value(AVLNode<T>* root, const T& value) const;
         AVLNode<T>* get_root() const { return my_root; }
 
         int  get_tree_height(AVLNode<T>* root) const;
@@ -64,14 +60,12 @@ static int max(int a, int b){
 
     private:
         AVLNode<T>* my_root;
-        void insert_node(AVLNode<T>* root, AVLNode<T>* ins);
+        void insert_node(AVLNode<T>* root, AVLNode<T>* insert);
         void delete_node(AVLNode<T>* node);
-
     };
 
 template <class T>
-static AVLNode<T>* find_min(AVLNode<T>* root)
-{
+static AVLNode<T>* find_min(AVLNode<T>* root) {
     if(root == nullptr)
         return nullptr;
     else if(root->left == nullptr)
@@ -88,6 +82,7 @@ AVLTree<T>::~AVLTree() {
 
 template <class T>
 void AVLTree<T>::delete_node(AVLNode<T>* node) {
+    // deletes all subtree of node and node itself.
     if(node) {
         delete_node(node->get_left());
         delete_node(node->get_right());
@@ -97,31 +92,35 @@ void AVLTree<T>::delete_node(AVLNode<T>* node) {
 
 template <class T>
 void AVLTree<T>::insert_value(const T& value) {
+    // if value already exists, do nothing.
     auto* new_node = new AVLNode<T>(value);
-    if(!my_root) // Creating a root.
+    if(my_root == nullptr) // Creating a root, if tree is empty.
         my_root = new_node;
     else
-        insert_node(my_root, new_node);
-
+    {
+        if(find_value(my_root, value) != nullptr)
+            return;
+        else
+            insert_node(my_root, new_node);
+    }
 }
 
 template <class T>
-void AVLTree<T>::insert_node(AVLNode<T>* root, AVLNode<T>* ins) {
-
-    if( ins->get_value() <= root->get_value() ) {
+void AVLTree<T>::insert_node(AVLNode<T>* root, AVLNode<T>* insert) {
+    if(insert->get_value() <= root->get_value()) {
         if(root->get_left()) // If there is a left child, keep going left.
-            insert_node(root->get_left(), ins);
+            insert_node(root->get_left(), insert);
         else {
-            root->set_left(ins);
-            ins->set_parent(root);
+            root->set_left(insert);
+            insert->set_parent(root);
         }
     }
     else {
         if(root->get_right()) // If there is a right child, keep going right.
-            insert_node(root->get_right(), ins);
+            insert_node(root->get_right(), insert);
         else {
-            root->set_right(ins);
-            ins->set_parent(root);
+            root->set_right(insert);
+            insert->set_parent(root);
         }
     }
 
@@ -129,16 +128,16 @@ void AVLTree<T>::insert_node(AVLNode<T>* root, AVLNode<T>* ins) {
     int balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
     root->set_balanced_factor(balance);
     if(balance > 1) { // Left tree is unbalanced
-        if(get_balance_factor( root->get_left() ) < 0) // LR rotation needed.
+        if(get_balance_factor(root->get_left()) < 0) // LR rotation needed.
             rotate_left(root->get_left());
         rotate_right(root);
     }
     else if(balance < -1) { // Right tree is unbalanced.
-        if(get_balance_factor( root->get_right() ) > 0) // RL rotation needed.
-            rotate_right( root->get_right() );
+        if(get_balance_factor(root->get_right()) > 0) // RL rotation needed.
+            rotate_right(root->get_right());
         rotate_left(root);
     }
-    root->set_height(max(get_tree_height(root->get_left()) ,get_tree_height(root->get_right())) + 1);
+    root->set_height(max(get_tree_height(root->get_left()), get_tree_height(root->get_right())) + 1);
 }
 
 template <class T>
@@ -151,18 +150,14 @@ void AVLTree<T>::in_order(AVLNode<T>* root) const {
 }
 
 template <class T>
-AVLNode<T>* AVLTree<T>::find_value(AVLNode<T>* root, const T& value, bool* side_flag) const {
+AVLNode<T>* AVLTree<T>::find_value(AVLNode<T>* root, const T& value) const {
     if(root) {
-        if(root->get_value() == value)
+        if (root->get_value() == value)
             return root;
-        else if(value < root->get_value()) {
-            *side_flag = false;
+        else if (value < root->get_value())
             return find_value(root->get_left(), value);
-        }
-        else {
-            *side_flag = true;
+        else
             return find_value(root->get_right(), value);
-        }
     }
     return nullptr;
 }
@@ -175,7 +170,7 @@ int AVLTree<T>::get_tree_height(AVLNode<T>* root) const {
 }
 
 template <class T>
-int  AVLTree<T>::get_balance_factor(AVLNode<T>* current_node) const {
+int AVLTree<T>::get_balance_factor(AVLNode<T>* current_node) const {
     return current_node->get_balance_factor();
 }
 
@@ -267,8 +262,8 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
             root->set_right(rotate_right(root->get_right()));
             return rotate_left(root);
         }
-
     }
+
     // If right node is deleted, left case
     else if((root->get_right()->get_height() - root->get_left()->get_height()) == 2) {
         // left left case
