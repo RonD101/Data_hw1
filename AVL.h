@@ -19,7 +19,7 @@ class AVLNode {
         void set_left(AVLNode* new_left)     { this->left = new_left; }
         void set_height(int new_height)      { this->height = new_height; }
 
-        void print_node() const { std::cout << data << std::endl; }
+        void print_node() const { std::cout << data << " : " << balance_factor << std::endl; }
 
         int get_balance_factor() { return balance_factor; }
         int get_height() {
@@ -138,6 +138,8 @@ void AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
             rotate_right(root->get_right());
         rotate_left(root);
     }
+    balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
+    root->set_balanced_factor(balance);
     root->set_height(max(get_tree_height(root->get_left()), get_tree_height(root->get_right())) + 1);
 }
 
