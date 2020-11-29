@@ -15,9 +15,12 @@ int main() {
 
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::shuffle(numbers.begin(), numbers.end(), std::default_random_engine(seed));
-
+    int cnt = 0;
     for(int i = 0; i < 100; i++)
+    {
         new_tree.insert_value(numbers[i]);
-    new_tree.in_order(new_tree.get_root());
+    }
+
+    //new_tree.in_order(new_tree.get_root());
     return 0;
 }

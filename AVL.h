@@ -60,7 +60,7 @@ class AVLNode {
 
     private:
         AVLNode<T>* my_root;
-        void insert_node(AVLNode<T>* root, AVLNode<T>* insert);
+        void insert_node(AVLNode<T>* root, const T& value);
         void delete_node(AVLNode<T>* node);
     };
 
@@ -92,35 +92,36 @@ void AVLTree<T>::delete_node(AVLNode<T>* node) {
 
 template <class T>
 void AVLTree<T>::insert_value(const T& value) {
-    // if value already exists, do nothing.
-    auto* new_node = new AVLNode<T>(value);
-    if(my_root == nullptr) // Creating a root, if tree is empty.
-        my_root = new_node;
-    else
+    if(my_root == nullptr)
     {
-        if(find_value(my_root, value) != nullptr)
-            return;
-        else
-            insert_node(my_root, new_node);
+        // Creating a root, if tree is empty.
+        auto* new_node = new AVLNode<T>(value);
+        my_root = new_node;
     }
+    else
+            insert_node(my_root, value);
 }
 
 template <class T>
-void AVLTree<T>::insert_node(AVLNode<T>* root, AVLNode<T>* insert) {
-    if(insert->get_value() <= root->get_value()) {
+void AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
+    if(root->get_value() == value)
+        return;
+    else if(value < root->get_value()) {
         if(root->get_left()) // If there is a left child, keep going left.
-            insert_node(root->get_left(), insert);
+            insert_node(root->get_left(), value);
         else {
-            root->set_left(insert);
-            insert->set_parent(root);
+            auto* new_node = new AVLNode<T>(value);
+            root->set_left(new_node);
+            new_node->set_parent(root);
         }
     }
     else {
         if(root->get_right()) // If there is a right child, keep going right.
-            insert_node(root->get_right(), insert);
+            insert_node(root->get_right(), value);
         else {
-            root->set_right(insert);
-            insert->set_parent(root);
+            auto* new_node = new AVLNode<T>(value);
+            root->set_right(new_node);
+            new_node->set_parent(root);
         }
     }
 
