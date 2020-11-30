@@ -2,50 +2,12 @@
 #define GENERIC_AVL_H
 
 #include <iostream>
+#include "AVLNode.h"
 
-static int max(int a, int b) {
-    return (a > b) ? a : b;
-}
-
-template <class T>
-class AVLNode {
-    public:
-        explicit AVLNode(const T& value) : data(value), left(nullptr), right(nullptr), parent(nullptr), height(0), balance_factor(0) {}
-        ~AVLNode() = default;
-        const T& get_value() const { return data; }
-        void set_balanced_factor(int new_balance_factor) { balance_factor = new_balance_factor; }
-        void set_parent(AVLNode* new_parent) { this->parent = new_parent; }
-        void set_right(AVLNode* new_right)   { this->right = new_right;}
-        void set_left(AVLNode* new_left)     { this->left = new_left;}
-        void set_height(int new_height)      { this->height = new_height; }
-
-        void print_node() const { std::cout << data << std::endl; }
-
-        int get_balance_factor() { return balance_factor; }
-        int static get_height(AVLNode* root);
-
-        AVLNode* get_parent() const { return parent; }
-        AVLNode* get_right()  const { return right; }
-        AVLNode* get_left()   const { return left; }
-        T     data;
-        AVLNode* left;
-        AVLNode* right;
-    private:
-        AVLNode* parent;
-        int height;
-        int balance_factor;
-};
-
-template <class T>
-int AVLNode<T>::get_height(AVLNode* root) {
-    if(root == nullptr)
-        return -1;
-    return root->height;
-}
 template <class T>
 class AVLTree {
     public:
-        AVLTree() : my_root(nullptr) {}
+        explicit AVLTree(int id = 0, AVLNode<T>* root = nullptr) : tree_id(id), my_root(root) {}
         ~AVLTree();
         AVLNode<T>* find_value(AVLNode<T>* root, const T& value) const;
         AVLNode<T>* get_root() const { return my_root; }
@@ -55,10 +17,19 @@ class AVLTree {
 
         AVLNode<T>* rotate_left (AVLNode<T>* current_node);
         AVLNode<T>* rotate_right(AVLNode<T>* current_node);
-        void insert_value(const T& value);
+        void insert_value(T& value);
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
         void in_order (AVLNode<T>* root) const;
-
+        int tree_id;
+    bool operator==(AVLTree other) const {
+        return (tree_id == other.tree_id);
+    }
+    bool operator<(AVLTree other) const {
+        return (tree_id < other.tree_id);
+    }
+    bool operator>(AVLTree other) const {
+        return (tree_id > other.tree_id);
+    }
     private:
         AVLNode<T>* my_root;
         void insert_node(AVLNode<T>* root, const T& value);
@@ -92,7 +63,7 @@ void AVLTree<T>::delete_node(AVLNode<T>* node) {
 }
 
 template <class T>
-void AVLTree<T>::insert_value(const T& value) {
+void AVLTree<T>::insert_value(T& value) {
     if(my_root == nullptr)
     {
         // Creating a root, if tree is empty.
@@ -101,6 +72,11 @@ void AVLTree<T>::insert_value(const T& value) {
     }
     else
             insert_node(my_root, value);
+}
+
+template <class T>
+static int max(T a, T b) {
+    return (a > b) ? a : b;
 }
 
 template <class T>
