@@ -4,9 +4,7 @@
 #include "Lecture.h"
 class Course {
     public:
-        explicit Course(int id) : id(id) {
-            lectures_tree = new AVLTree<Lecture>();
-        };
+        explicit Course(int id) : id(id) {};
         int id;
         AVLTree<Lecture>* lectures_tree;
         bool operator==(const Course other) const {
