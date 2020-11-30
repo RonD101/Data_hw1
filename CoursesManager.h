@@ -1,10 +1,10 @@
-#ifndef HW1_BOOMMANAGER_H
-#define HW1_BOOMMANAGER_H
+#ifndef HW1_COURSESMANAGER_H
+#define HW1_COURSESMANAGER_H
 #include "library.h"
 #include "AVL.h"
 #include "Course.h"
 
-class BoomManager {
+class CoursesManager {
     public:
         AVLTree<Course> course_tree;
 
@@ -25,4 +25,4 @@ class BoomManager {
 };
 
 
-#endif //HW1_BOOMMANAGER_H
+#endif //HW1_COURSESMANAGER_H
