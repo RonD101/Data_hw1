@@ -8,17 +8,15 @@ class CoursesManager {
     public:
         AVLTree<Course> course_tree;
 
-    void *Init();
+    StatusType AddCourse (int courseID, int numOfClasses);
 
-    StatusType AddCourse (void *DS, int courseID, int numOfClasses);
+    StatusType RemoveCourse(int courseID);
 
-    StatusType RemoveCourse(void *DS, int courseID);
+    StatusType WatchClass(int courseID, int classID, int time);
 
-    StatusType WatchClass(void *DS, int courseID, int classID, int time);
+    StatusType TimeViewed(int courseID, int classID, int *timeViewed);
 
-    StatusType TimeViewed(void *DS, int courseID, int classID, int *timeViewed);
-
-    StatusType GetMostViewedClasses(void *DS, int numOfClasses, int *courses, int *classes);
+    StatusType GetMostViewedClasses(int numOfClasses, int *courses, int *classes);
 
     void Quit(void** DS);
 

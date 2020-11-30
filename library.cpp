@@ -5,5 +5,5 @@ void *Init() {
     return (void*)DS;
 }
 StatusType AddCourse(void *DS, int courseID, int numOfClasses) {
-    return ((CoursesManager *)DS)-> AddCourse(courseID, numOfCourses);
+    return ((CoursesManager *)DS)->AddCourse(courseID, numOfClasses);
 }

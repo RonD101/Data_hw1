@@ -7,7 +7,6 @@ using std::endl;
 
 int main() {
     CoursesManager boom;
-    boom.Init();
-    boom.AddCourse(nullptr, 1,10);
+    boom.AddCourse(1, 10);
     return 0;
 }
