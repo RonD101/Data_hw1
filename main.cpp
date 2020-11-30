@@ -19,19 +19,19 @@ int main() {
     {
         new_tree.insert_value(i);
     }
-    new_tree.in_order(new_tree.get_root());
-    cout<<"***************"<<endl;
-    new_tree.delete_value(new_tree.get_root(),743);
-    new_tree.delete_value(new_tree.get_root(),202);
-    new_tree.in_order(new_tree.get_root());
-    cout<<"***************"<<endl;
-    new_tree.delete_value(new_tree.get_root(),202);
-    new_tree.delete_value(new_tree.get_root(),509);
-    new_tree.delete_value(new_tree.get_root(),111);
-    new_tree.delete_value(new_tree.get_root(),0);
-    new_tree.delete_value(new_tree.get_root(), 545454);
-    new_tree.delete_value(new_tree.get_root(), 999);
-    cout<<"***************"<<endl;
-    new_tree.in_order(new_tree.get_root());
+//    new_tree.in_order(new_tree.get_root());
+//    cout<<"***************"<<endl;
+//    new_tree.delete_value(new_tree.get_root(),743);
+//    new_tree.delete_value(new_tree.get_root(),202);
+//    new_tree.in_order(new_tree.get_root());
+//    cout<<"***************"<<endl;
+//    new_tree.delete_value(new_tree.get_root(),202);
+//    new_tree.delete_value(new_tree.get_root(),509);
+//    new_tree.delete_value(new_tree.get_root(),111);
+//    new_tree.delete_value(new_tree.get_root(),0);
+//    new_tree.delete_value(new_tree.get_root(), 545454);
+//    new_tree.delete_value(new_tree.get_root(), 999);
+//    cout<<"***************"<<endl;
+//    new_tree.in_order(new_tree.get_root());
     return 0;
 }
