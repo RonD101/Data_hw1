@@ -22,11 +22,7 @@ class AVLNode {
         void print_node() const { std::cout << data << std::endl; }
 
         int get_balance_factor() { return balance_factor; }
-        int get_height() {
-            if(this == nullptr)
-                return -1;
-            return this->height;
-        }
+        int static get_height(AVLNode* root);
 
         AVLNode* get_parent() const { return parent; }
         AVLNode* get_right()  const { return right; }
@@ -40,6 +36,12 @@ class AVLNode {
         int balance_factor;
 };
 
+template <class T>
+int AVLNode<T>::get_height(AVLNode* root) {
+    if(root == nullptr)
+        return -1;
+    return root->height;
+}
 template <class T>
 class AVLTree {
     public:
@@ -168,7 +170,7 @@ template <class T>
 int AVLTree<T>::get_tree_height(AVLNode<T>* root) const {
     if(root == nullptr)
         return -1;
-    return root->get_height();
+    return AVLNode<T>::get_height(root);
 }
 
 template <class T>
@@ -256,13 +258,13 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
     if(root == nullptr)
         return root;
 
-    root->set_height(max(root->get_left()->get_height(), root->get_right()->get_height() + 1));
+    root->set_height(max(AVLNode<T>::get_height(root->get_left()), AVLNode<T>::get_height(root->get_right()) + 1));
 
     // If node is unbalanced
     // If left node is deleted, right case
-    if((root->get_left()->get_height() - root->get_right()->get_height()) == 2) {
+    if(AVLNode<T>::get_height(root->get_left()) - AVLNode<T>::get_height(root->get_right()) == 2) {
         // right right case
-        if((root->get_left()->get_left()->get_height() - root->get_left()->get_right()->get_height()) == 1)
+        if((AVLNode<T>::get_height(root->get_left()->get_left())) - (AVLNode<T>::get_height(root->get_left()->get_right())) == 1)
             return rotate_left(root);
             // right left case
         else {
@@ -272,9 +274,9 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
     }
 
     // If right node is deleted, left case
-    else if((root->get_right()->get_height() - root->get_left()->get_height()) == 2) {
+    else if((AVLNode<T>::get_height(root->get_right())) - (AVLNode<T>::get_height(root->get_left())) == 2) {
         // left left case
-        if((root->get_right()->get_right()->get_height() - root->right->get_left()->get_height()) == 1)
+        if((AVLNode<T>::get_height(root->get_right()->get_right())) - (AVLNode<T>::get_height(root->right->get_left())) == 1)
             return rotate_right(root);
             // left right case
         else {
