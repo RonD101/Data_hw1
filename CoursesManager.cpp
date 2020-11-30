@@ -1,40 +1,32 @@
-//
-// Created by user on 30/11/2020.
-//
 #include "CoursesManager.h"
 
-/* A function that constructs Balanced Binary Search Tree
-from a sorted array */
-AVLNode<Lecture>* sortedArrayToBST(int arr[], int start, int end) {
-    /* Base Case */
-    if (start > end)
-        return nullptr;
+void sortedArrayToBST(AVLNode<Lecture>* root, int start, int end)
+{
+    if(start > end)
+        return;
 
-    /* Get the middle element and make it root */
-    int mid = (start + end)/2;
-    auto* l = new Lecture(arr[mid], 0);
-    auto* root = new AVLNode<Lecture>(*l);
-
-    /* Recursively construct the left subtree
-    and make it left child of root */
-    root->set_left(sortedArrayToBST(arr, start, mid - 1));
-
-    /* Recursively construct the right subtree
-    and make it right child of root */
-    root->set_right(sortedArrayToBST(arr, mid + 1, end));
-    return root;
+    int mid = (start + end) / 2;
+    int l_mid = (mid - start) / 2;
+    int r_mid = (end - mid + 1) / 2;
+    Lecture left_l(l_mid, 0);
+    Lecture right_l(r_mid, 0);
+    AVLNode<Lecture> left_n(left_l);
+    AVLNode<Lecture> right_n(right_l);
+    left_n.set_parent(root);
+    right_n.set_parent(root);
+    root->set_left(&left_n);
+    root->set_right(&right_n);
+    sortedArrayToBST(root->get_left(), start, mid - 1);
+    sortedArrayToBST(root->get_right(), mid + 1, end);
 }
 
 StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
-    int *arr = new int[numOfClasses];
-    for (int i = 0; i < numOfClasses; ++i) {
-        arr[i] = i;
-    }
-
     Course new_course(courseID);
-    new_course.lectures_tree->set_root(sortedArrayToBST(arr, 0, numOfClasses));
+    Lecture temp(numOfClasses/2, 0);
+    AVLNode<Lecture> root(temp);
+    sortedArrayToBST(&root, 0, numOfClasses);
+    new_course.lectures_tree->set_root(&root);
     new_course.lectures_tree->in_order(new_course.lectures_tree->get_root());
     course_tree.insert_value(new_course);
-    delete [] arr;
     return SUCCESS;
 }

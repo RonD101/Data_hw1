@@ -7,7 +7,7 @@
 template <class T>
 class AVLTree {
     public:
-        explicit AVLTree(int id = 0, AVLNode<T>* root = nullptr) : tree_id(id), my_root(root) {}
+        explicit AVLTree(AVLNode<T>* root = nullptr) : my_root(root) {}
         ~AVLTree();
         AVLNode<T>* find_value(AVLNode<T>* root, const T& value) const;
         AVLNode<T>* get_root() const { return my_root; }
@@ -20,16 +20,7 @@ class AVLTree {
         void insert_value(const T& value);
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
         void in_order (AVLNode<T>* root) const;
-        int tree_id;
-    bool operator==(AVLTree other) const {
-        return (tree_id == other.tree_id);
-    }
-    bool operator<(AVLTree other) const {
-        return (tree_id < other.tree_id);
-    }
-    bool operator>(AVLTree other) const {
-        return (tree_id > other.tree_id);
-    }
+
     private:
         AVLNode<T>* my_root;
         void insert_node(AVLNode<T>* root, const T& value);
