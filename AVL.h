@@ -15,8 +15,8 @@ class AVLNode {
         const T& get_value() const { return data; }
         void set_balanced_factor(int new_balance_factor) { balance_factor = new_balance_factor; }
         void set_parent(AVLNode* new_parent) { this->parent = new_parent; }
-        void set_right(AVLNode* new_right)   { this->right = new_right; }
-        void set_left(AVLNode* new_left)     { this->left = new_left; }
+        void set_right(AVLNode* new_right)   { this->right = new_right;}
+        void set_left(AVLNode* new_left)     { this->left = new_left;}
         void set_height(int new_height)      { this->height = new_height; }
 
         void print_node() const { std::cout << data << " : " << balance_factor << std::endl; }
@@ -181,6 +181,8 @@ template <class T>
 AVLNode<T>* AVLTree<T>::rotate_left(AVLNode<T>* current_node) {
     AVLNode<T>* new_root = current_node->get_right();
     current_node->set_right(new_root->get_left());
+    if(new_root->get_left())
+        (new_root->get_left())->set_parent(current_node);
     new_root->set_left(current_node);
 
     if(current_node->get_parent() == nullptr) {
@@ -203,6 +205,8 @@ AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
     // Rotate node
     AVLNode<T>* new_root = current_node->get_left();
     current_node->set_left(new_root->get_right());
+    if(new_root->get_right())
+        (new_root->get_right())->set_parent(current_node);
     new_root->set_right(current_node);
 
     // Adjust tree
