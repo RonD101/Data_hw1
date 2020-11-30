@@ -8,14 +8,14 @@ class Course {
             lectures_tree = new AVLTree<Lecture>();
         };
         int id;
-        AVLTree<Lecture> lectures_tree;
-        bool operator==(Lecture other) const {
+        AVLTree<Lecture>* lectures_tree;
+        bool operator==(const Course other) const {
             return (id == other.id);
         }
-        bool operator<(Lecture other) const {
+        bool operator<(const Course other) const {
             return (id < other.id);
         }
-        bool operator>(Lecture other) const {
+        bool operator>(const Course other) const {
             return (id > other.id);
         }
 };

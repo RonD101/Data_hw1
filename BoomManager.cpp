@@ -27,8 +27,8 @@ AVLNode<Lecture>* sortedArrayToBST(int arr[], int start, int end) {
 }
 
 void *BoomManager::Init() {
-    auto* boom = new BoomManager();
-    return boom;
+    course_tree = AVLTree<Course>();
+    return this;
 }
 
 StatusType BoomManager::AddCourse(void *DS, int courseID, int numOfClasses) {
@@ -38,7 +38,7 @@ StatusType BoomManager::AddCourse(void *DS, int courseID, int numOfClasses) {
         arr[i] = i;
     }
     auto* new_course = new Course(courseID);
-    new_course->lectures_tree->(sortedArrayToBST(arr, 0, numOfClasses));
+    new_course->lectures_tree->set_root(sortedArrayToBST(arr, 0, numOfClasses));
     new_course->lectures_tree->in_order(new_course->lectures_tree->get_root());
     course_tree.insert_value(*new_course);
     delete [] arr;

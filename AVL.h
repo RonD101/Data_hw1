@@ -11,13 +11,13 @@ class AVLTree {
         ~AVLTree();
         AVLNode<T>* find_value(AVLNode<T>* root, const T& value) const;
         AVLNode<T>* get_root() const { return my_root; }
-
+        void set_root(AVLNode<T>* root) { my_root = root; }
         int  get_tree_height(AVLNode<T>* root) const;
         int  get_balance_factor(AVLNode<T>* current_node) const;
 
         AVLNode<T>* rotate_left (AVLNode<T>* current_node);
         AVLNode<T>* rotate_right(AVLNode<T>* current_node);
-        void insert_value(T& value);
+        void insert_value(const T& value);
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
         void in_order (AVLNode<T>* root) const;
         int tree_id;
@@ -63,7 +63,7 @@ void AVLTree<T>::delete_node(AVLNode<T>* node) {
 }
 
 template <class T>
-void AVLTree<T>::insert_value(T& value) {
+void AVLTree<T>::insert_value(const T& value) {
     if(my_root == nullptr)
     {
         // Creating a root, if tree is empty.
