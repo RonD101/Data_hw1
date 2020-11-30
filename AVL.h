@@ -19,12 +19,11 @@ class AVLNode {
         void set_left(AVLNode* new_left)     { this->left = new_left;}
         void set_height(int new_height)      { this->height = new_height; }
 
-        void print_node() const { std::cout << data << " : " << balance_factor << std::endl; }
+        void print_node() const { std::cout << data << std::endl; }
 
         int get_balance_factor() { return balance_factor; }
         int get_height() {
             if(this == nullptr)
-                // should this be 0 or -1?
                 return -1;
             return this->height;
         }
@@ -39,10 +38,10 @@ class AVLNode {
         AVLNode* parent;
         int height;
         int balance_factor;
-    };
+};
 
-    template <class T>
-    class AVLTree {
+template <class T>
+class AVLTree {
     public:
         AVLTree() : my_root(nullptr) {}
         ~AVLTree();
@@ -62,7 +61,7 @@ class AVLNode {
         AVLNode<T>* my_root;
         void insert_node(AVLNode<T>* root, const T& value);
         void delete_node(AVLNode<T>* node);
-    };
+};
 
 template <class T>
 static AVLNode<T>* find_min(AVLNode<T>* root) {
@@ -179,6 +178,7 @@ int AVLTree<T>::get_balance_factor(AVLNode<T>* current_node) const {
 
 template <class T>
 AVLNode<T>* AVLTree<T>::rotate_left(AVLNode<T>* current_node) {
+
     AVLNode<T>* new_root = current_node->get_right();
     current_node->set_right(new_root->get_left());
     if(new_root->get_left())
