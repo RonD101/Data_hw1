@@ -1,12 +1,13 @@
 #ifndef HW1_COURSE_H
 #define HW1_COURSE_H
-#include "AVL.h"
-#include "Lecture.h"
+
 #include "TemArray.h"
+#include "Lecture.h"
+#include "AVL.h"
 
 class Course {
     public:
-        explicit Course(int id) : id(id) {};
+        explicit Course(int id, int num = 0) : id(id) , lectures(TemArray<Lecture>(num)) {};
         int id;
         TemArray<Lecture> lectures;
 

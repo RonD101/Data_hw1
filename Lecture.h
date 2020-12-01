@@ -2,7 +2,7 @@
 #define HW1_LECTURE_H
 class Lecture {
 public:
-    Lecture(int id, int timed_watched) : id(id), timed_watched(timed_watched) {}
+    Lecture(int id = 0, int timed_watched = 0) : id(id), timed_watched(timed_watched) {}
     int id;
     int timed_watched;
 

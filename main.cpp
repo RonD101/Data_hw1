@@ -7,12 +7,9 @@ using std::endl;
 
 int main() {
     CoursesManager boom;
-    //boom.AddCourse(1, 5);
-    TemArray<int> t(5);
-    t[1] = 5;
-    cout << t[3] << endl;
-    t[3] = 10;
-    cout << t[3] << endl;
-
+    boom.AddCourse(1, 5);
+    boom.AddCourse(2, 7);
+    boom.RemoveCourse(2);
+    boom.course_tree.in_order(boom.course_tree.get_root());
     return 0;
 }

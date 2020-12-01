@@ -2,10 +2,11 @@
 
 
 StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
-    auto* new_course = new Course(courseID);
+    auto* new_course = new Course(courseID, numOfClasses);
     for (int i = 0; i < numOfClasses; ++i) {
         new_course->lectures[i] = Lecture(i, 0);
     }
+
     if(course_tree.insert_value(*new_course))
         return SUCCESS;
     return FAILURE;
