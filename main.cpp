@@ -10,6 +10,9 @@ int main() {
     //boom.AddCourse(1, 5);
     TemArray<int> t(5);
     t[1] = 5;
-    cout << t[0] << endl;
+    cout << t[3] << endl;
+    t[3] = 10;
+    cout << t[3] << endl;
+
     return 0;
 }

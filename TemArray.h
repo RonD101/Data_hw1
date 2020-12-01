@@ -9,10 +9,6 @@
 //#include "Auxiliaries.h"
 #include <string>
 
-//static int default_int(){
-//    return 0;
-//}
-
 /**
 * Template Array
 *
@@ -32,11 +28,7 @@
     template<class T>
     class TemArray {
         T *data;
-        T *pointers;
-        T *relevantIndexes;
-        int top;
         int length;
-
     public:
         class BadAccess;
 
@@ -119,25 +111,19 @@
 * @exception
 *   Return BadAccess for invalid read of memory.
 */
-//        const T &operator[](int index) const;
+        const T &operator[](int index) const;
     };
 
     template<class T>
     TemArray<T>::TemArray(int size) {
         data = new T[size];
-        pointers = new T[size];
-        relevantIndexes = new T[size];
         length = size;
-        top = 0;
     }
 
     template<class T>
     TemArray<T>::TemArray(const TemArray<T> &a) {
         data = new T[a.size()];
-        pointers = new T[a.size()];
-        relevantIndexes = new T[a.size()];
         length = a.size();
-        top = a.top;
         for (int i = 0; i < a.size(); ++i) {
             data[i] = a[i];
         }
@@ -146,8 +132,6 @@
     template<class T>
     TemArray<T>::~TemArray() {
         delete[] data;
-        delete[] pointers;
-        delete[] relevantIndexes;
     }
 
     template<class T>
@@ -156,29 +140,18 @@
             return *this;
         }
         T *temp_array = new T[a.size()];
-        T *temp_pointers = new T[a.size()];
-        T *temp_relevantIndexes = new T[a.size()];
+        delete[] data;
         for (int i = 0; i < a.size(); ++i) {
             try {
                 temp_array[i] = a[i];
-                temp_pointers[i] = a.pointers[i];
-                temp_relevantIndexes[i] = a.relevantIndexes[i];
             }
             catch (const std::exception &e) {
                 delete[] temp_array;
-                delete[] temp_pointers;
-                delete[] temp_relevantIndexes;
                 throw e;
             }
         }
-        delete[] data;
-        delete[] pointers;
-        delete[] relevantIndexes;
         data = temp_array;
-        pointers = temp_pointers;
-        relevantIndexes = temp_relevantIndexes;
         length = a.size();
-        top = a.top;
         return *this;
     }
 
@@ -192,37 +165,16 @@
         if (index < 0 || index >= this->size()) {
             throw TemArray::BadAccess();
         }
-//        int P = pointers[index];
-//        if(P<0)
-//            P= 0 ;
-//        int R = relevantIndexes[(pointers[index])];
-        if((pointers[index]) < top && relevantIndexes[(pointers[index])] == index)
-//        if(P < top && R == index)
-            return data[index];
-        else{
-            data[index] = index;
-            relevantIndexes[top] = index;
-            pointers[index] = top;
-            top +=1;
-            return data[index];
-        }
+        return data[index];
     }
 
-//    template<class T>
-//    const T &TemArray<T>::operator[](int index) const {
-//        if (index < 0 || index >= this->size()) {
-//            throw TemArray::BadAccess();
-//        }
-//        if(*(pointers[index]) < top && relevantIndexes[*(pointers[index])] == index)
-//            return data[index];
-//        else{
-//            data[index] = index;
-//            relevantIndexes[top] = index;
-//            pointers[index] = relevantIndexes[top];
-//            top +=1;
-//            return data[index];
-//        }
-//    }
+    template<class T>
+    const T &TemArray<T>::operator[](int index) const {
+        if (index < 0 || index >= this->size()) {
+            throw TemArray::BadAccess();
+        }
+        return data[index];
+    }
 
 
 /**
