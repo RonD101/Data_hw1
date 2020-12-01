@@ -1,11 +1,15 @@
 #include "AVL.h"
 #include "CoursesManager.h"
+#include "TemArray.h"
 
 using std::cout;
 using std::endl;
 
 int main() {
     CoursesManager boom;
-    boom.AddCourse(1, 5);
+    //boom.AddCourse(1, 5);
+    TemArray<int> t(5);
+    t[1] = 5;
+    cout << t[0] << endl;
     return 0;
 }
