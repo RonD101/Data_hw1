@@ -5,17 +5,34 @@ public:
     Lecture(int id, int timed_watched) : id(id), timed_watched(timed_watched) {}
     int id;
     int timed_watched;
-    bool operator==(const Lecture other) const {
+
+    void add_time(const int time) { timed_watched += time; }
+
+    bool operator==(const Lecture &other) const {
         return (id == other.id);
     }
-    bool operator<(const Lecture other) const {
-        return (id < other.id);
+
+    // Lectures are ordered according to timed_watched. If equal, the ordered by id.
+    bool operator<(const Lecture &other) const {
+        if(timed_watched < other.timed_watched)
+            return true;
+        else if(timed_watched == other.timed_watched)
+            return (id < other.id);
+        else
+            return false;
     }
-    bool operator>(const Lecture other) const {
-        return (id > other.id);
+
+    bool operator>(const Lecture &other) const {
+        if(timed_watched > other.timed_watched)
+            return true;
+        else if(timed_watched == other.timed_watched)
+            return (id > other.id);
+        else
+            return false;
     }
-    friend std::ostream& operator<<(std::ostream& os, const Lecture& l){
-        os << l.id << " : " << l.timed_watched << std::endl;
+
+    friend std::ostream& operator<<(std::ostream& os, const Lecture& l) {
+        os << "Lecture ID : " << l.id << " | Watch time : " << l.timed_watched << std::endl;
         return os;
     }
 };

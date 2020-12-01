@@ -7,23 +7,22 @@
 template <class T>
 class AVLTree {
     public:
-        explicit AVLTree(AVLNode<T>* root = nullptr) : my_root(root) {}
+        explicit AVLTree() : my_root(nullptr) {}
+
         ~AVLTree();
         AVLNode<T>* find_value(AVLNode<T>* root, const T& value) const;
         AVLNode<T>* get_root() const { return my_root; }
-        void set_root(AVLNode<T>* root) { my_root = root; }
         int  get_tree_height(AVLNode<T>* root) const;
         int  get_balance_factor(AVLNode<T>* current_node) const;
-
         AVLNode<T>* rotate_left (AVLNode<T>* current_node);
         AVLNode<T>* rotate_right(AVLNode<T>* current_node);
-        void insert_value(const T& value);
+        bool insert_value(const T& value);
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
         void in_order (AVLNode<T>* root) const;
 
     private:
         AVLNode<T>* my_root;
-        void insert_node(AVLNode<T>* root, const T& value);
+        bool insert_node(AVLNode<T>* root, const T& value);
         void delete_node(AVLNode<T>* node);
 };
 
@@ -54,15 +53,15 @@ void AVLTree<T>::delete_node(AVLNode<T>* node) {
 }
 
 template <class T>
-void AVLTree<T>::insert_value(const T& value) {
-    if(my_root == nullptr)
-    {
+bool AVLTree<T>::insert_value(const T& value) {
+    if(my_root == nullptr) {
         // Creating a root, if tree is empty.
         auto* new_node = new AVLNode<T>(value);
         my_root = new_node;
+        return true;
     }
     else
-            insert_node(my_root, value);
+        return(insert_node(my_root, value));
 }
 
 template <class T>
@@ -71,9 +70,9 @@ static int max(T a, T b) {
 }
 
 template <class T>
-void AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
+bool AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
     if(root->get_value() == value)
-        return;
+        return false;
     else if(value < root->get_value()) {
         if(root->get_left()) // If there is a left child, keep going left.
             insert_node(root->get_left(), value);
@@ -109,6 +108,7 @@ void AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
     balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
     root->set_balanced_factor(balance);
     root->set_height(max(get_tree_height(root->get_left()), get_tree_height(root->get_right())) + 1);
+    return true;
 }
 
 template <class T>
