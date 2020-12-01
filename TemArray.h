@@ -29,7 +29,6 @@
 */
 
 
-namespace mtm {
     template<class T>
     class TemArray {
         T *data;
@@ -193,12 +192,17 @@ namespace mtm {
         if (index < 0 || index >= this->size()) {
             throw TemArray::BadAccess();
         }
-        if(*(pointers[index]) < top && relevantIndexes[*(pointers[index])] == index)
+//        int P = pointers[index];
+//        if(P<0)
+//            P= 0 ;
+//        int R = relevantIndexes[(pointers[index])];
+        if((pointers[index]) < top && relevantIndexes[(pointers[index])] == index)
+//        if(P < top && R == index)
             return data[index];
         else{
             data[index] = index;
             relevantIndexes[top] = index;
-            pointers[index] = relevantIndexes[top];
+            pointers[index] = top;
             top +=1;
             return data[index];
         }
@@ -239,6 +243,6 @@ namespace mtm {
             return "Bad Access";
         }
     };
-}
+
 
 #endif //HW3PARTB_TEMARRAY_H
