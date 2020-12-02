@@ -14,7 +14,7 @@ public:
     Node<T> *head;
     explicit List():head(nullptr){}
     ~List();
-    void addNodeAfter(Node<T> *node, T data);
+    Node<T>* addNodeAfter(Node<T> *node, T data);
     void addNodeBefore(Node<T> *node, T data);
     void removeNode(Node<T> *node);
     Node<T>* addAtStart(T data);
@@ -31,18 +31,20 @@ void List<T>::removeNode(Node<T> *node) {
             head->setPrev(nullptr);
         } else
             head = nullptr;
+        delete node;
         return;
     }
     // if node is not the last one.
     if(node->getNext() != nullptr)
         node->getPrev()->setNext(node->getNext());
     node->getPrev()->setNext(node->getNext());
+    delete node;
 }
 
 template<class T>
-void List<T>::addNodeAfter(Node<T> *node,T data) {
+Node<T>* List<T>::addNodeAfter(Node<T> *node,T data) {
     if (node == nullptr)
-        return;
+        return nullptr;
     auto* new_node = new Node<T>(data);
     if(node->getNext() != nullptr){
         (node->getNext())->setPrev(new_node);
@@ -50,6 +52,7 @@ void List<T>::addNodeAfter(Node<T> *node,T data) {
     }
     new_node->setPrev(node);
     node->setNext(new_node);
+    return new_node;
 }
 
 template<class T>
