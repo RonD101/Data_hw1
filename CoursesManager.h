@@ -5,6 +5,7 @@
 #include "Course.h"
 #include "List.h"
 #include "ViewData.h"
+#include <memory>
 
 class CoursesManager {
 public:

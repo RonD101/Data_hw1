@@ -248,7 +248,10 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
     // With one or zero children.
     else {
         temp = root;
-        if(root->get_left() == nullptr)
+        // zero children
+        if(root->get_left() == nullptr && root->get_right() == nullptr)
+            root = nullptr;
+        else if(root->get_left() == nullptr)
             root = root->get_right();
         else if(root->get_right() == nullptr)
             root = root->get_left();

@@ -1,4 +1,3 @@
-#include <memory>
 #include "CoursesManager.h"
 
 StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
@@ -7,15 +6,9 @@ StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
     for (int i = 0; i < numOfClasses; ++i)
         new_course.lectures[i] = Lecture(i, 0, courseID);
 
-
     if(course_tree.insert_value(new_course) && empty_courses_id.insert_value(courseID)) {
         // we need to keep track of the smallest empty course for GetMostViewed.
         smallest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root());
-
-        ///////
-//        course_tree.find_value(new_course)
-        ///////
-
         return SUCCESS;
     }
 
