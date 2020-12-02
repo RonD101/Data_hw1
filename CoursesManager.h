@@ -7,6 +7,8 @@
 class CoursesManager {
     public:
         AVLTree<Course> course_tree;
+        AVLTree<int> empty_courses_id;
+        AVLTree<Lecture> wathced_lecture_tree;
 
     StatusType AddCourse (int courseID, int numOfClasses);
 

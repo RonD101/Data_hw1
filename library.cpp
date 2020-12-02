@@ -1,5 +1,6 @@
 #include "library.h"
 #include "CoursesManager.h"
+
 void *Init() {
     CoursesManager *DS = new CoursesManager ();
     return (void*)DS;
@@ -22,6 +23,18 @@ StatusType RemoveCourse(void *DS, int courseID) {
         return INVALID_INPUT;
     try {
         StatusType status(((CoursesManager *)DS)->RemoveCourse(courseID));
+        return status;
+    }
+    catch (const std::bad_alloc&) {
+        return ALLOCATION_ERROR;
+    }
+}
+
+StatusType TimeViewed(void *DS, int courseID, int classID, int *timeViewed) {
+    if(classID < 0 || courseID <= 0 || DS == nullptr)
+        return INVALID_INPUT;
+    try {
+        StatusType status(((CoursesManager *)DS)->TimeViewed(courseID, classID, timeViewed));
         return status;
     }
     catch (const std::bad_alloc&) {
