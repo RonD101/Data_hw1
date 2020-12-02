@@ -49,6 +49,8 @@ AVLTree<T>::~AVLTree() {
 
 template <class T>
 void AVLTree<T>::delete_node(AVLNode<T>* node) {
+    if(nodes_counter <= 0)
+        return;
     // deletes all subtree of node and node itself.
     if(node) {
         delete_node(node->get_left());
