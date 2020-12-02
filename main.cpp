@@ -11,6 +11,9 @@ int main() {
 
     CoursesManager CM;
     CM.AddCourse(3,6);
+    CM.WatchClass(3,4,50);
+    CM.WatchClass(3,2,10);
+    CM.RemoveCourse(3);
 //    CM.AddCourse(2,9);
 //    CM.AddCourse(1,8);
 //    CM.WatchClass(2,4,50);
@@ -18,8 +21,8 @@ int main() {
 //    CM.WatchClass(2,4,60);
 //    CM.WatchClass(2,6,60);
 //    CM.WatchClass(1,6,70);
-    CM.WatchClass(3,4,50);
-    CM.watchedTree.in_order(CM.watchedTree.get_root());
+
+    CM.watched_lecture_tree.in_order(CM.watched_lecture_tree.get_root());
 
     ////////////
 //    AVLTree<ViewData> v;

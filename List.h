@@ -9,8 +9,9 @@
 
 template<class T>
 class List {
-    Node<T> *head;
+
 public:
+    Node<T> *head;
     explicit List():head(nullptr){}
     ~List();
     void addNodeAfter(Node<T> *node, T data);
@@ -50,6 +51,7 @@ Node<T>* List<T>::addAtStart(T data) {
     Node<T>* new_node = new Node<T>(data);
     if(head == nullptr){
         head = new_node;
+        head->setNext(nullptr);
         return new_node;
     }
     head->setPrev(new_node);

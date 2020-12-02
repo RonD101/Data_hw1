@@ -17,7 +17,8 @@ public:
     int getCourse()const {return course;}
     int getLecture()const {return lecture;}
     int getTimeViewed()const {return timeViewed;}
-    bool operator<(const ViewData& data) const{
+
+    bool operator<(const ViewData& data) const {
         if(timeViewed < data.timeViewed)
             return true;
         else if(timeViewed > data.timeViewed)
@@ -32,43 +33,17 @@ public:
             return false;
         return false;
     }
-    bool operator>(const ViewData& data) const{
+    bool operator>(const ViewData& data) const {
         return (data < *this);
     }
-//    bool operator>(const ViewData& data) const;
-    bool operator==(const ViewData& data) const{
-        if(timeViewed == data.timeViewed && course == data.course && lecture == data.lecture)
-            return true;
-        return false;
+    bool operator==(const ViewData& data) const {
+        return (timeViewed == data.timeViewed && course == data.course && lecture == data.lecture);
     }
+
     friend std::ostream& operator<<(std::ostream& os, const ViewData& data) {
         os << "Course ID : " << data.course << ", Lecture ID : " << data.lecture << ", Watch time : " << data.timeViewed << std::endl;
         return os;
     }
 };
-
-
-
-//bool ViewData::operator<(const ViewData& data) const{
-//    if(timeViewed < data.timeViewed)
-//        return true;
-//    else if(timeViewed > data.timeViewed)
-//        return false;
-//    else if (course > data.course)
-//        return true;
-//    else if(course < data.course)
-//        return false;
-//    else if(lecture > data.lecture)
-//        return true;
-//    else if(lecture < data.lecture)
-//        return false;
-//    return true; //not supposed to get here
-//}
-//
-//bool ViewData::operator==(const ViewData &data) const {
-//    if(timeViewed == data.timeViewed && course == data.course && lecture == data.lecture)
-//        return true;
-//    return false;
-//}
 
 #endif //HW1_VIEWDATA_H

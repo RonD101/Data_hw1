@@ -19,7 +19,6 @@ class Course {
         List<int> empty_lecture;
         TemArray<Node<int>*> pointers_to_empty_lectures;
 
-
         // Courses are ordered by id only.
         bool operator==(const Course &other) const {
             return (id == other.id);
@@ -36,5 +35,8 @@ class Course {
                 os << c.lectures[i] << std::endl;
             return os;
         }
+
+
 };
+
 #endif //HW1_COURSE_H

@@ -7,7 +7,7 @@
 template <class T>
 class AVLTree {
     public:
-        explicit AVLTree() : my_root(nullptr) {}
+        explicit AVLTree() : my_root(nullptr) { nodes_counter = 0; }
 
         ~AVLTree();
         AVLNode<T>* find_value(AVLNode<T>* root, const T& value) const;
@@ -20,6 +20,7 @@ class AVLTree {
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
         void in_order (AVLNode<T>* root) const;
         void reverse_in_order(AVLNode<T>* root) const;
+        int nodes_counter;
     private:
         static AVLNode<T>* find_min(AVLNode<T>* root);
 
@@ -57,10 +58,11 @@ void AVLTree<T>::delete_node(AVLNode<T>* node) {
 
 template <class T>
 bool AVLTree<T>::insert_value(const T& value) {
-    if(my_root == nullptr) {
+    if(my_root == nullptr || nodes_counter == 0) {
         // Creating a root, if tree is empty.
         auto* new_node = new AVLNode<T>(value);
         my_root = new_node;
+        nodes_counter++;
         return true;
     }
     else
@@ -83,6 +85,7 @@ bool AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
             auto* new_node = new AVLNode<T>(value);
             root->set_left(new_node);
             new_node->set_parent(root);
+            nodes_counter++;
         }
     }
     else {
@@ -92,6 +95,7 @@ bool AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
             auto* new_node = new AVLNode<T>(value);
             root->set_right(new_node);
             new_node->set_parent(root);
+            nodes_counter++;
         }
     }
 
@@ -211,6 +215,12 @@ AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
 template <class T>
 AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
 
+    if(nodes_counter == 0)
+    {
+        my_root = nullptr;
+        return nullptr;
+    }
+
     AVLNode<T>* temp;
     // Element not found
     if(root == nullptr)
@@ -235,6 +245,7 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
         else if(root->get_right() == nullptr)
             root = root->get_left();
         delete temp;
+        nodes_counter--;
     }
     if(root == nullptr)
         return root;

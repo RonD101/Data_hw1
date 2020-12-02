@@ -7,11 +7,10 @@
 #include "ViewData.h"
 
 class CoursesManager {
-    public:
+public:
     AVLTree<Course> course_tree;
-    AVLTree<ViewData> watchedTree;
-        AVLTree<int> empty_courses_id;
-        AVLTree<Lecture> watched_lecture_tree;
+    AVLTree<ViewData> watched_lecture_tree;
+    AVLTree<int> empty_courses_id;
 
     StatusType AddCourse (int courseID, int numOfClasses);
 

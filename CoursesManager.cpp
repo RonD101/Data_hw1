@@ -1,12 +1,12 @@
+#include <memory>
 #include "CoursesManager.h"
 
 StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
-
-    Course new_course(courseID, numOfClasses);
+    auto* new_course = new Course(courseID, numOfClasses);
     for (int i = 0; i < numOfClasses; ++i)
-        new_course.lectures[i] = Lecture(i, 0, courseID);
+        new_course->lectures[i] = Lecture(i, 0, courseID);
 
-    if(course_tree.insert_value(new_course) && empty_courses_id.insert_value(courseID))
+    if(course_tree.insert_value(*new_course) && empty_courses_id.insert_value(courseID))
         return SUCCESS;
 
     return FAILURE;
@@ -18,8 +18,9 @@ StatusType CoursesManager::RemoveCourse(int courseID) {
     empty_courses_id.delete_value(empty_courses_id.get_root(), courseID);
 
     // remove all lectures associated with the course from the "big" lecture tree.
-    for (int i = 0; i < course_tree.find_value(course_tree.get_root(), temp_course)->data.lectures.size(); ++i) {
-        Lecture temp_lecture(courseID, 0, i);
+    auto temp_list = course_tree.find_value(course_tree.get_root(), temp_course)->data.lectures;
+    for (int i = 0; i < temp_list.size(); ++i) {
+        ViewData temp_lecture(courseID, i, temp_list[i].timed_watched);
         watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), temp_lecture);
     }
 
@@ -31,9 +32,16 @@ StatusType CoursesManager::RemoveCourse(int courseID) {
 StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
     int old_time_viewed = (course_tree.find_value(course_tree.get_root(),Course(courseID)))->data.lectures[classID].timed_watched;
     if(old_time_viewed > 0)
-        watchedTree.delete_value(watchedTree.get_root(), ViewData(courseID,classID, old_time_viewed));
-    watchedTree.insert_value(ViewData(courseID,classID, old_time_viewed + time));
+        watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), ViewData(courseID,classID, old_time_viewed));
+    watched_lecture_tree.insert_value(ViewData(courseID,classID, old_time_viewed + time));
     (course_tree.find_value(course_tree.get_root(),Course(courseID))->data.lectures[classID]).add_time(time);
+    Course temp_course(courseID);
+    temp_course = course_tree.find_value(course_tree.get_root(), temp_course)->data;
+
+    // if no empty lectures left in course, remove it from empty_tree.
+    if(temp_course.empty_lecture.head == nullptr)
+        empty_courses_id.delete_value(empty_courses_id.get_root(), courseID);
+
 
     /*
      * Course temp_course(courseID);
