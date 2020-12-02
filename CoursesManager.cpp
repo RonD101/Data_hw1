@@ -30,44 +30,33 @@ StatusType CoursesManager::RemoveCourse(int courseID) {
 }
 
 StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
-    int old_time_viewed = (course_tree.find_value(course_tree.get_root(),Course(courseID)))->data.lectures[classID].timed_watched;
-    if(old_time_viewed > 0)
-        watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), ViewData(courseID,classID, old_time_viewed));
-    watched_lecture_tree.insert_value(ViewData(courseID,classID, old_time_viewed + time));
-    (course_tree.find_value(course_tree.get_root(),Course(courseID))->data.lectures[classID]).add_time(time);
-    Course temp_course(courseID);
-    temp_course = course_tree.find_value(course_tree.get_root(), temp_course)->data;
+    AVLNode<Course>* temp_node = course_tree.find_value(course_tree.get_root(), Course(courseID));
 
-    // if no empty lectures left in course, remove it from empty_tree.
-    if(temp_course.empty_lecture.head == nullptr)
-        empty_courses_id.delete_value(empty_courses_id.get_root(), courseID);
-
-
-    /*
-     * Course temp_course(courseID);
-    AVLNode<Course>* temp_node = course_tree.find_value(course_tree.get_root(), temp_course);
+    // no class with this id in course.
     if(temp_node != nullptr && (classID + 1 > temp_node->data.lectures.size()))
         return INVALID_INPUT;
+    // no course with this id.
     if(temp_node == nullptr)
         return FAILURE;
 
-    // try to remove course from empty tree.
-    empty_courses_id.delete_value(empty_courses_id.get_root(), courseID);
 
-    // add time to the lecture array in the course.
-    int old_time = temp_node->data.lectures[classID].timed_watched;
+    int old_time_viewed = temp_node->data.lectures[classID].timed_watched;
+    // remove old lecture from watched tree and insert the new one (with the updated time).
+    if(old_time_viewed > 0)
+        watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), ViewData(courseID,classID, old_time_viewed));
+    watched_lecture_tree.insert_value(ViewData(courseID, classID, old_time_viewed + time));
     temp_node->data.lectures[classID].add_time(time);
-    Lecture temp_lecture(classID, old_time, courseID);
 
-    // remove lecture from lecture tree and add a new one (to make sure we reserve the tree)
-    watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), temp_lecture);
-    temp_lecture.timed_watched += time;
-    watched_lecture_tree.insert_value(temp_lecture);
+    // if no empty lectures left in course, remove it from empty_tree.
+    if(temp_node->data.empty_lecture.head == nullptr)
+        empty_courses_id.delete_value(empty_courses_id.get_root(), courseID);
 
-    // fix pointer array in course.
-     *
-     */
-    return INVALID_INPUT;
+
+    // remove class from empty list and set pointer to that list to null (if it is not null already).
+    if(temp_node->data.pointers_to_empty_lectures[classID] != nullptr)
+        temp_node->data.empty_lecture.removeNode(temp_node->data.pointers_to_empty_lectures[classID]);
+    temp_node->data.pointers_to_empty_lectures[classID] = nullptr;
+    return SUCCESS;
 }
 
 StatusType CoursesManager::TimeViewed(int courseID, int classID, int *timeViewed) {
@@ -82,5 +71,12 @@ StatusType CoursesManager::TimeViewed(int courseID, int classID, int *timeViewed
         return FAILURE;
 
     *timeViewed = temp->data.lectures[classID].timed_watched;
+    return SUCCESS;
+}
+
+StatusType CoursesManager::GetMostViewedClasses(int numOfClasses, int *courses, int *classes) {
+    int cnt = numOfClasses;
+    watched_lecture_tree.reverse_in_order(watched_lecture_tree.get_root(), &cnt);
+
     return SUCCESS;
 }

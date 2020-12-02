@@ -41,3 +41,15 @@ StatusType TimeViewed(void *DS, int courseID, int classID, int *timeViewed) {
         return ALLOCATION_ERROR;
     }
 }
+
+StatusType WatchClass(void *DS, int courseID, int classID, int time) {
+    if(time <= 0 || classID < 0 || courseID <= 0 || DS == nullptr)
+        return INVALID_INPUT;
+    try {
+        StatusType status(((CoursesManager *)DS)->WatchClass(courseID, classID, time));
+        return status;
+    }
+    catch (const std::bad_alloc&) {
+        return ALLOCATION_ERROR;
+    }
+}
