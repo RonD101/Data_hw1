@@ -19,7 +19,7 @@ class AVLTree {
         bool insert_value(const T& value);
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
         void in_order (AVLNode<T>* root) const;
-        void reverse_in_order(AVLNode<T>* root) const;
+        void reverse_in_order(AVLNode<T>* root, int *cnt) const;
         int nodes_counter;
     private:
         static AVLNode<T>* find_min(AVLNode<T>* root);
@@ -127,14 +127,20 @@ void AVLTree<T>::in_order(AVLNode<T>* root) const {
     }
 }
 
+// Traverse the right subtree by recursively calling the reverse in-order function.
+// Access the data part of the current node.
+// Traverse the left subtree by recursively calling the reverse in-order function.
 template <class T>
-void AVLTree<T>::reverse_in_order(AVLNode<T>* root) const {
+void AVLTree<T>::reverse_in_order(AVLNode<T>* root, int* cnt) const {
     // need to implement
-
     if(root) {
-        reverse_in_order(root->get_left());
+        reverse_in_order(root->get_right(), cnt);
+        if(*cnt <= 0)
+            return;
         root->print_node();
-        reverse_in_order(root->get_right());
+        *cnt = *cnt - 1;
+
+        reverse_in_order(root->get_left(), cnt);
     }
 }
 

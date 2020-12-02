@@ -16,15 +16,34 @@ public:
     ~List();
     void addNodeAfter(Node<T> *node, T data);
     void addNodeBefore(Node<T> *node, T data);
+    void removeNode(Node<T> *node);
     Node<T>* addAtStart(T data);
 };
 
+template <class T>
+void List<T>::removeNode(Node<T> *node) {
+    if(node == nullptr)
+        return;
+    if(node == head) {
+        // node is head with next nodes (more than one item).
+        if(node->getNext() != nullptr) {
+            head = node->getNext();
+            head->setPrev(nullptr);
+        } else
+            head = nullptr;
+        return;
+    }
+    // if node is not the last one.
+    if(node->getNext() != nullptr)
+        node->getPrev()->setNext(node->getNext());
+    node->getPrev()->setNext(node->getNext());
+}
 
 template<class T>
 void List<T>::addNodeAfter(Node<T> *node,T data) {
     if (node == nullptr)
         return;
-    Node<T>* new_node = new Node<T>(data);
+    auto* new_node = new Node<T>(data);
     if(node->getNext() != nullptr){
         (node->getNext())->setPrev(new_node);
         new_node->setNext(node->getNext());
