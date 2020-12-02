@@ -2,30 +2,39 @@
 #include "CoursesManager.h"
 
 StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
-    auto* new_course = new Course(courseID, numOfClasses);
+     auto* new_course = new Course(courseID, numOfClasses);
+    //Course new_course(courseID, numOfClasses);
     for (int i = 0; i < numOfClasses; ++i)
         new_course->lectures[i] = Lecture(i, 0, courseID);
 
-    if(course_tree.insert_value(*new_course) && empty_courses_id.insert_value(courseID))
+    if(course_tree.insert_value(*new_course) && empty_courses_id.insert_value(courseID)) {
+        // we need to keep track of the smallest empty course for GetMostViewed.
+        smallest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root());
         return SUCCESS;
+    }
 
     return FAILURE;
 }
 
 StatusType CoursesManager::RemoveCourse(int courseID) {
-    Course temp_course(courseID);
-    // remove course from empty tree and try to remove it from the main tree.
+
+    if(course_tree.find_value(course_tree.get_root(), Course(courseID)) == nullptr)
+        return FAILURE;
+    // remove course from empty tree.
     empty_courses_id.delete_value(empty_courses_id.get_root(), courseID);
+    // we need to keep track of the smallest empty course for GetMostViewed.
+    smallest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root());
 
     // remove all lectures associated with the course from the "big" lecture tree.
-    auto temp_list = course_tree.find_value(course_tree.get_root(), temp_course)->data.lectures;
-    for (int i = 0; i < temp_list.size(); ++i) {
-        ViewData temp_lecture(courseID, i, temp_list[i].timed_watched);
-        watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), temp_lecture);
+    auto temp_node = course_tree.find_value(course_tree.get_root(), Course(courseID));
+    if(temp_node != nullptr) {
+        for (int i = 0; i < temp_node->data.lectures.size(); ++i) {
+            ViewData temp_lecture(courseID, i, temp_node->data.lectures[i].timed_watched);
+            watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), temp_lecture);
+        }
     }
 
-    if(course_tree.delete_value(course_tree.get_root(), temp_course) == nullptr)
-        return FAILURE;
+    course_tree.delete_value(course_tree.get_root(), Course(courseID));
     return SUCCESS;
 }
 
@@ -48,9 +57,10 @@ StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
     temp_node->data.lectures[classID].add_time(time);
 
     // if no empty lectures left in course, remove it from empty_tree.
-    if(temp_node->data.empty_lecture.head == nullptr)
+    if(temp_node->data.empty_lecture.head == nullptr) {
         empty_courses_id.delete_value(empty_courses_id.get_root(), courseID);
-
+        smallest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root());
+    }
 
     // remove class from empty list and set pointer to that list to null (if it is not null already).
     if(temp_node->data.pointers_to_empty_lectures[classID] != nullptr)
@@ -75,8 +85,19 @@ StatusType CoursesManager::TimeViewed(int courseID, int classID, int *timeViewed
 }
 
 StatusType CoursesManager::GetMostViewedClasses(int numOfClasses, int *courses, int *classes) {
-    int cnt = numOfClasses;
-    watched_lecture_tree.reverse_in_order(watched_lecture_tree.get_root(), &cnt);
+    int remained = numOfClasses;
+    int counted = 0;
+    watched_lecture_tree.reverse_in_order(watched_lecture_tree.get_root(), &remained, &counted, courses, classes);
+    for(int i = 0; i < numOfClasses; i++) {
+        std::cout << "Course : " << courses[i] << " | Lecture : ";
+        std::cout << classes[i] << std::endl;
+    }
+
+    // printed enough lectures.
+    if (counted >= numOfClasses) {
+        return SUCCESS;
+    }
 
     return SUCCESS;
 }
+

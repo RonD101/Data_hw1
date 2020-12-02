@@ -11,6 +11,7 @@ public:
     AVLTree<Course> course_tree;
     AVLTree<ViewData> watched_lecture_tree;
     AVLTree<int> empty_courses_id;
+    AVLNode<int>* smallest_empty_course;
 
     StatusType AddCourse (int courseID, int numOfClasses);
 

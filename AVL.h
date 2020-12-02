@@ -19,12 +19,11 @@ class AVLTree {
         bool insert_value(const T& value);
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
         void in_order (AVLNode<T>* root) const;
-        void reverse_in_order(AVLNode<T>* root, int *cnt) const;
+        void reverse_in_order(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const;
         int nodes_counter;
-    private:
-        static AVLNode<T>* find_min(AVLNode<T>* root);
+        AVLNode<T>* find_min(AVLNode<T>* root);
 
-private:
+    private:
         AVLNode<T>* my_root;
         bool insert_node(AVLNode<T>* root, const T& value);
         void delete_node(AVLNode<T>* node);
@@ -32,6 +31,8 @@ private:
 
 template <class T>
 AVLNode<T>* AVLTree<T>::find_min(AVLNode<T>* root) {
+    if(nodes_counter <= 0)
+        return nullptr;
     if(root == nullptr)
         return nullptr;
     else if(root->left == nullptr)
@@ -131,16 +132,18 @@ void AVLTree<T>::in_order(AVLNode<T>* root) const {
 // Access the data part of the current node.
 // Traverse the left subtree by recursively calling the reverse in-order function.
 template <class T>
-void AVLTree<T>::reverse_in_order(AVLNode<T>* root, int* cnt) const {
+void AVLTree<T>::reverse_in_order(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const {
     // need to implement
     if(root) {
-        reverse_in_order(root->get_right(), cnt);
-        if(*cnt <= 0)
+        reverse_in_order(root->get_right(), remained, counted, courses, classes);
+        if(*remained <= 0)
             return;
         root->print_node();
-        *cnt = *cnt - 1;
-
-        reverse_in_order(root->get_left(), cnt);
+        courses[*counted] = root->data.getCourse();
+        classes[*counted] = root->data.getLecture();
+        *remained = *remained - 1;
+        *counted = *counted + 1;
+        reverse_in_order(root->get_left(), remained, counted, courses, classes);
     }
 }
 
@@ -220,9 +223,8 @@ AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
 
 template <class T>
 AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
-
-    if(nodes_counter == 0)
-    {
+    // dont even try to delete from an empty tree.
+    if(nodes_counter == 0) {
         my_root = nullptr;
         return nullptr;
     }
@@ -253,6 +255,7 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
         delete temp;
         nodes_counter--;
     }
+
     if(root == nullptr)
         return root;
 
@@ -262,23 +265,23 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
     // If left node is deleted, right case
     if(AVLNode<T>::get_height(root->get_left()) - AVLNode<T>::get_height(root->get_right()) == 2) {
         // right right case
-        if((AVLNode<T>::get_height(root->get_left()->get_left())) - (AVLNode<T>::get_height(root->get_left()->get_right())) == 1)
-            return rotate_left(root);
+        if((AVLNode<T>::get_height(root->get_left()->get_left())) - (AVLNode<T>::get_height(root->get_left()->get_right())) >= 0)
+            return rotate_right(root);
             // right left case
         else {
-            root->set_right(rotate_right(root->get_right()));
-            return rotate_left(root);
+            root->set_left(rotate_left(root->get_left()));
+            return rotate_right(root);
         }
     }
 
     // If right node is deleted, left case
-    else if((AVLNode<T>::get_height(root->get_right())) - (AVLNode<T>::get_height(root->get_left())) == 2) {
-        // left left case
-        if((AVLNode<T>::get_height(root->get_right()->get_right())) - (AVLNode<T>::get_height(root->right->get_left())) == 1)
-            return rotate_right(root);
+    else if((AVLNode<T>::get_height(root->get_left())) - (AVLNode<T>::get_height(root->get_right())) < -1) {
+        // right right case
+        if((AVLNode<T>::get_height(root->get_right()->get_left())) - (AVLNode<T>::get_height(root->get_right()->get_right())) <= 0)
+            return rotate_left(root);
             // left right case
         else {
-            root->set_left(rotate_left(root->get_left()));
+            root->set_right(rotate_right(root->get_right()));
             return rotate_left(root);
         }
     }

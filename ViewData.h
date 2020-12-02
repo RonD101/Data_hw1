@@ -14,9 +14,9 @@ public:
     void setCourse(int new_course){course = new_course;}
     void setLecture(int new_lecture){lecture = new_lecture;}
     void setTimeViewed(int new_timeViewed){timeViewed = new_timeViewed;}
-    int getCourse()const {return course;}
-    int getLecture()const {return lecture;}
-    int getTimeViewed()const {return timeViewed;}
+    int getCourse() const { return course; }
+    int getLecture() const { return lecture; }
+    int getTimeViewed() const { return timeViewed; }
 
     bool operator<(const ViewData& data) const {
         if(timeViewed < data.timeViewed)
