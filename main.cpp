@@ -11,13 +11,14 @@ int main() {
 
     CoursesManager CM;
     CM.AddCourse(3,6);
-    CM.AddCourse(2,9);
-    CM.AddCourse(1,8);
-    CM.WatchClass(2,4,50);
+//    CM.AddCourse(2,9);
+//    CM.AddCourse(1,8);
+//    CM.WatchClass(2,4,50);
+//    CM.WatchClass(3,4,50);
+//    CM.WatchClass(2,4,60);
+//    CM.WatchClass(2,6,60);
+//    CM.WatchClass(1,6,70);
     CM.WatchClass(3,4,50);
-    CM.WatchClass(2,4,60);
-    CM.WatchClass(2,6,60);
-    CM.WatchClass(1,6,70);
     CM.watchedTree.in_order(CM.watchedTree.get_root());
 
     ////////////

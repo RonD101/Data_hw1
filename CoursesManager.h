@@ -11,7 +11,7 @@ class CoursesManager {
     AVLTree<Course> course_tree;
     AVLTree<ViewData> watchedTree;
         AVLTree<int> empty_courses_id;
-        AVLTree<Lecture> wathced_lecture_tree;
+        AVLTree<Lecture> watched_lecture_tree;
 
     StatusType AddCourse (int courseID, int numOfClasses);
 

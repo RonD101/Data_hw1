@@ -19,6 +19,8 @@ class AVLTree {
         bool insert_value(const T& value);
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
         void in_order (AVLNode<T>* root) const;
+        void reverse_in_order(AVLNode<T>* root) const;
+    private:
         static AVLNode<T>* find_min(AVLNode<T>* root);
 
 private:
@@ -118,6 +120,17 @@ void AVLTree<T>::in_order(AVLNode<T>* root) const {
         in_order(root->get_left());
         root->print_node();
         in_order(root->get_right());
+    }
+}
+
+template <class T>
+void AVLTree<T>::reverse_in_order(AVLNode<T>* root) const {
+    // need to implement
+
+    if(root) {
+        reverse_in_order(root->get_left());
+        root->print_node();
+        reverse_in_order(root->get_right());
     }
 }
 

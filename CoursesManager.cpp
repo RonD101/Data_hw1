@@ -1,16 +1,13 @@
 #include "CoursesManager.h"
 
-
 StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
+
     Course new_course(courseID, numOfClasses);
-    for (int i = 0; i < numOfClasses; ++i) {
+    for (int i = 0; i < numOfClasses; ++i)
         new_course.lectures[i] = Lecture(i, 0, courseID);
-    }
 
     if(course_tree.insert_value(new_course) && empty_courses_id.insert_value(courseID))
         return SUCCESS;
-//    AVLNode<Course>* course_node = course_tree.find_value(course_tree.get_root(), new_course);
-//    AVLNode<Course>* next_course = AVLTree<Course>::find_min(course_node->get_right());
 
     return FAILURE;
 }
@@ -23,7 +20,7 @@ StatusType CoursesManager::RemoveCourse(int courseID) {
     // remove all lectures associated with the course from the "big" lecture tree.
     for (int i = 0; i < course_tree.find_value(course_tree.get_root(), temp_course)->data.lectures.size(); ++i) {
         Lecture temp_lecture(courseID, 0, i);
-        wathced_lecture_tree.delete_value(wathced_lecture_tree.get_root(), temp_lecture);
+        watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), temp_lecture);
     }
 
     if(course_tree.delete_value(course_tree.get_root(), temp_course) == nullptr)
@@ -55,9 +52,9 @@ StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
     Lecture temp_lecture(classID, old_time, courseID);
 
     // remove lecture from lecture tree and add a new one (to make sure we reserve the tree)
-    wathced_lecture_tree.delete_value(wathced_lecture_tree.get_root(), temp_lecture);
+    watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), temp_lecture);
     temp_lecture.timed_watched += time;
-    wathced_lecture_tree.insert_value(temp_lecture);
+    watched_lecture_tree.insert_value(temp_lecture);
 
     // fix pointer array in course.
      *

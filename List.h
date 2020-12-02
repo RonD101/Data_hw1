@@ -15,7 +15,7 @@ public:
     ~List();
     void addNodeAfter(Node<T> *node, T data);
     void addNodeBefore(Node<T> *node, T data);
-    void addAtStart(T data);
+    Node<T>* addAtStart(T data);
 };
 
 
@@ -46,15 +46,16 @@ void List<T>::addNodeBefore(Node<T> *node, T data) {
 }
 
 template<class T>
-void List<T>::addAtStart(T data) {
+Node<T>* List<T>::addAtStart(T data) {
     Node<T>* new_node = new Node<T>(data);
     if(head == nullptr){
         head = new_node;
-        return;
+        return new_node;
     }
     head->setPrev(new_node);
     new_node->setNext(head);
     head = new_node;
+    return new_node;
 }
 
 template<class T>
