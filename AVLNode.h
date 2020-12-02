@@ -7,6 +7,7 @@ public:
     explicit AVLNode(const T& value) : data(value), left(nullptr), right(nullptr), parent(nullptr), height(0), balance_factor(0) {}
     ~AVLNode() = default;
     const T& get_value() const { return data; }
+    T& get_value() { return data; }
     void set_balanced_factor(int new_balance_factor) { balance_factor = new_balance_factor; }
     void set_parent(AVLNode* new_parent) { this->parent = new_parent; }
     void set_right(AVLNode* new_right)   { this->right = new_right;}

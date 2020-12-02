@@ -19,15 +19,16 @@ class AVLTree {
         bool insert_value(const T& value);
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
         void in_order (AVLNode<T>* root) const;
+        static AVLNode<T>* find_min(AVLNode<T>* root);
 
-    private:
+private:
         AVLNode<T>* my_root;
         bool insert_node(AVLNode<T>* root, const T& value);
         void delete_node(AVLNode<T>* node);
 };
 
 template <class T>
-static AVLNode<T>* find_min(AVLNode<T>* root) {
+AVLNode<T>* AVLTree<T>::find_min(AVLNode<T>* root) {
     if(root == nullptr)
         return nullptr;
     else if(root->left == nullptr)

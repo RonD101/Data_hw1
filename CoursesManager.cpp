@@ -1,5 +1,6 @@
 #include "CoursesManager.h"
 
+
 StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
     Course new_course(courseID, numOfClasses);
     for (int i = 0; i < numOfClasses; ++i) {
@@ -8,6 +9,9 @@ StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
 
     if(course_tree.insert_value(new_course) && empty_courses_id.insert_value(courseID))
         return SUCCESS;
+//    AVLNode<Course>* course_node = course_tree.find_value(course_tree.get_root(), new_course);
+//    AVLNode<Course>* next_course = AVLTree<Course>::find_min(course_node->get_right());
+
     return FAILURE;
 }
 
@@ -28,7 +32,14 @@ StatusType CoursesManager::RemoveCourse(int courseID) {
 }
 
 StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
-    Course temp_course(courseID);
+    int old_time_viewed = (course_tree.find_value(course_tree.get_root(),Course(courseID)))->data.lectures[classID].timed_watched;
+    if(old_time_viewed > 0)
+        watchedTree.delete_value(watchedTree.get_root(), ViewData(courseID,classID, old_time_viewed));
+    watchedTree.insert_value(ViewData(courseID,classID, old_time_viewed + time));
+    (course_tree.find_value(course_tree.get_root(),Course(courseID))->data.lectures[classID]).add_time(time);
+
+    /*
+     * Course temp_course(courseID);
     AVLNode<Course>* temp_node = course_tree.find_value(course_tree.get_root(), temp_course);
     if(temp_node != nullptr && (classID + 1 > temp_node->data.lectures.size()))
         return INVALID_INPUT;
@@ -49,7 +60,8 @@ StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
     wathced_lecture_tree.insert_value(temp_lecture);
 
     // fix pointer array in course.
-
+     *
+     */
     return INVALID_INPUT;
 }
 

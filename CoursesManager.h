@@ -3,10 +3,13 @@
 #include "library.h"
 #include "AVL.h"
 #include "Course.h"
+#include "List.h"
+#include "ViewData.h"
 
 class CoursesManager {
     public:
-        AVLTree<Course> course_tree;
+    AVLTree<Course> course_tree;
+    AVLTree<ViewData> watchedTree;
         AVLTree<int> empty_courses_id;
         AVLTree<Lecture> wathced_lecture_tree;
 

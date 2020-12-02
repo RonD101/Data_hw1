@@ -4,13 +4,14 @@
 #include "TemArray.h"
 #include "Lecture.h"
 #include "AVL.h"
+#include "List.h"
 
 class Course {
     public:
         explicit Course(int id, int num = 0) : id(id) , lectures(TemArray<Lecture>(num)) {};
         int id;
         TemArray<Lecture> lectures;
-
+        
         // Courses are ordered by id only.
         bool operator==(const Course &other) const {
             return (id == other.id);
