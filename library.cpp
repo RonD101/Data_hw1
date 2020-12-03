@@ -67,7 +67,6 @@ StatusType GetMostViewedClasses(void *DS, int numOfClasses, int *courses, int *c
 }
 
 void Quit(void** DS) {
-    ((CoursesManager *)DS)->Quit();
+    delete static_cast<CoursesManager*>(*DS);
     *DS = nullptr;
 }
-

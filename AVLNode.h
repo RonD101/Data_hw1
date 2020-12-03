@@ -8,7 +8,6 @@ public:
     ~AVLNode() = default;
     T data;
 
-    //T& get_value() { return data; }
     void set_balanced_factor(int new_balance_factor) { balance_factor = new_balance_factor; }
     void set_parent(AVLNode* new_parent) { this->parent = new_parent; }
     void set_right(AVLNode* new_right)   { this->right = new_right;}

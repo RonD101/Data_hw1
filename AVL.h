@@ -230,93 +230,86 @@ AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
 
 template <class T>
 AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
-
-    // dont even try to delete from an empty tree.
-    if(nodes_counter == 0) {
-        my_root = nullptr;
-        return nullptr;
-    }
-
-    // STEP 1: PERFORM STANDARD BST DELETE
-    if (root == nullptr)
-        return root;
-
-    // If the key to be deleted is smaller
-    // than the root's key, then it lies
-    // in left subtree
-    if (value < root->get_value())
-        root->set_left(delete_value(root->get_left(), value));
-
-        // If the key to be deleted is greater
-        // than the root's key, then it lies
-        // in right subtree
-    else if (value > root->get_value())
-        root->set_right(delete_value(root->get_right(), value));
-
-        // if key is same as root's key, then
-        // This is the node to be deleted
-    else {
-        // node with only one child or no child
-        if ((root->get_left() == nullptr) || (root->get_right() == nullptr)) {
-            AVLNode<T> *temp = root->get_left() ? root->get_left() : root->get_right();
-
-            // No child case
-            if (temp == nullptr) {
-                temp = root;
-                root = nullptr;
-            }
-            else // One child case
-                *root = *temp; // Copy the contents of
-            // the non-empty child
-            //delete temp;
-            nodes_counter--;
-            if(nodes_counter == 1)
-                root->set_parent(nullptr);
-        }
-        else {
-            // node with two children: Get the inorder
-            // successor (smallest in the right subtree)
-            AVLNode<T>* temp = find_min(root->get_right());
-
-            // Copy the inorder successor's
-            // data to this node
-            root->data = temp->get_value();
-
-            // Delete the inorder successor
-            root->set_right(delete_value(root->get_right(), temp->get_value()));
-        }
-    }
-
     if(root == nullptr)
-        return root;
+        return nullptr;
+    AVLNode<T>* temp_node = find_value(root, value);
+    // value not in tree
+    if(temp_node == nullptr)
+        return nullptr;
 
-    root->set_height(max(AVLNode<T>::get_height(root->get_left()), AVLNode<T>::get_height(root->get_right()) + 1));
+    AVLNode<T>* left = temp_node->get_left();
+    AVLNode<T>* right = temp_node->get_right();
 
-    // If node is unbalanced
-    // If left node is deleted, right case
-    if(AVLNode<T>::get_height(root->get_left()) - AVLNode<T>::get_height(root->get_right()) == 2) {
-        // right right case
-        if((AVLNode<T>::get_height(root->get_left()->get_left())) - (AVLNode<T>::get_height(root->get_left()->get_right())) >= 0)
-            return rotate_right(root);
-            // right left case
-        else {
-            root->set_left(rotate_left(root->get_left()));
-            return rotate_right(root);
+    // we are the root
+    if(my_root == temp_node) {
+        // we have no children.
+        if (left == nullptr && right == nullptr) {
+            delete temp_node;
+            my_root = nullptr;
+            nodes_counter = 0;
+        }
+        // we have left child.
+        else if (left != nullptr && right == nullptr) {
+            left->set_parent(nullptr);
+            my_root = left;
+            delete temp_node;
+        }
+        // we have right child
+        else if (left == nullptr && right != nullptr) {
+            right->set_parent(nullptr);
+            my_root = right;
+            delete temp_node;
+        }
+        // we have two children
+        else if(left != nullptr && right != nullptr) {
+            AVLNode<T>* next_in_order = find_min(right);
+            next_in_order->get_parent()->set_left(nullptr);
+            next_in_order->set_left(left);
+            next_in_order->set_right(right);
+            next_in_order->set_parent(nullptr);
+            my_root = next_in_order;
         }
     }
-
-    // If right node is deleted, left case
-    else if((AVLNode<T>::get_height(root->get_left())) - (AVLNode<T>::get_height(root->get_right())) < -1) {
-        // right right case
-        if((AVLNode<T>::get_height(root->get_right()->get_left())) - (AVLNode<T>::get_height(root->get_right()->get_right())) <= 0)
-            return rotate_left(root);
-            // left right case
-        else {
-            root->set_right(rotate_right(root->get_right()));
-            return rotate_left(root);
-        }
+    // we are leaf
+    else if(left == nullptr && right == nullptr) {
+        // we are left child
+        if(temp_node->get_parent()->get_left() == temp_node)
+            temp_node->get_parent()->set_left(nullptr);
+        else
+            temp_node->get_parent()->set_right(nullptr);
+        delete temp_node;
+        nodes_counter--;
     }
-    return root;
+    // we have one child
+    else if(left == nullptr || right == nullptr) {
+        // we are left child.
+        if(temp_node->get_parent()->get_left() == temp_node) {
+            // we have right child.
+            if(left == nullptr) {
+                temp_node->get_parent()->set_left(temp_node->get_right());
+                temp_node->get_right()->set_parent(temp_node->get_parent());
+            }
+            else { // we have left child.
+                temp_node->get_parent()->set_left(temp_node->get_left());
+                temp_node->get_left()->set_parent(temp_node->get_parent());
+            }
+        }
+        else { // we are right child.
+            if(left == nullptr) {
+                temp_node->get_parent()->set_right(temp_node->get_right());
+                temp_node->get_right()->set_parent(temp_node->get_parent());
+            }
+            else { // we have left child.
+                temp_node->get_parent()->set_right(temp_node->get_left());
+                temp_node->get_left()->set_parent(temp_node->get_parent());
+            }
+        }
+        delete temp_node;
+        nodes_counter--;
+    }
+    // we have two children
+    else if(left != nullptr && right != nullptr) {
+    }
 }
 
 #endif // GENERIC_AVL_H

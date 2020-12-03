@@ -23,7 +23,7 @@ int main() {
     WatchClass(DS, 2, 1, 5);
     WatchClass(DS, 2, 5, 13);
     WatchClass(DS, 1, 2, 5);
-
+    RemoveCourse(DS, 1);
     int courses[15] = {0};
     int classes[15] = {0};
 

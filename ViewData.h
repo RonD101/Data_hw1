@@ -10,10 +10,10 @@ class ViewData {
     int lecture;
     int timeViewed;
 public:
-    explicit ViewData(int course = 0 ,int lecture = 0,int timeViewed = 0): course(course), lecture(lecture), timeViewed(timeViewed){}
-    void setCourse(int new_course){course = new_course;}
-    void setLecture(int new_lecture){lecture = new_lecture;}
-    void setTimeViewed(int new_timeViewed){timeViewed = new_timeViewed;}
+    explicit ViewData(int course = 0 ,int lecture = 0,int timeViewed = 0) : course(course), lecture(lecture), timeViewed(timeViewed){}
+    void setCourse(int new_course) { course = new_course; }
+    void setLecture(int new_lecture) { lecture = new_lecture; }
+    void setTimeViewed(int new_timeViewed) { timeViewed = new_timeViewed; }
     int getCourse() const { return course; }
     int getLecture() const { return lecture; }
     int getTimeViewed() const { return timeViewed; }
