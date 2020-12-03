@@ -9,12 +9,12 @@
 
 class CoursesManager {
 public:
+    ~CoursesManager() = default;
     AVLTree<Course> course_tree;
     AVLTree<ViewData> watched_lecture_tree;
     AVLTree<int> empty_courses_id;
-    AVLNode<int>* smallest_empty_course;
-    List<int> empty_classes;
-
+    AVLNode<int>* smallest_empty_course = nullptr;
+    int lectures_counter = 0;
     StatusType AddCourse (int courseID, int numOfClasses);
 
     StatusType RemoveCourse(int courseID);
@@ -25,9 +25,8 @@ public:
 
     StatusType GetMostViewedClasses(int numOfClasses, int *courses, int *classes);
 
-    void Quit(void** DS);
+    void Quit();
 
 };
-
 
 #endif //HW1_COURSESMANAGER_H

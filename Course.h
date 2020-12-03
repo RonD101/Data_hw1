@@ -3,13 +3,12 @@
 
 #include "TemArray.h"
 #include "Lecture.h"
-#include "AVL.h"
 #include "List.h"
+#include "AVL.h"
 
 class Course {
     public:
-        explicit Course(int id, int num_of_lectures = 0) : id(id), lectures(TemArray<Lecture>(num_of_lectures)), pointers_to_empty_lectures(TemArray<Node<int>*>(num_of_lectures))
-        {
+        explicit Course(int id, int num_of_lectures = 0) : id(id), lectures(TemArray<Lecture>(num_of_lectures)), pointers_to_empty_lectures(TemArray<Node<int>*>(num_of_lectures)) {
             for (int i = num_of_lectures - 1; i >= 0; --i)
                 pointers_to_empty_lectures[i] = empty_lecture.addAtStart(i);
             //head_of_empty_lecture = empty_lecture.addAtStart(-1);
@@ -21,7 +20,7 @@ class Course {
         TemArray<Node<int>*> pointers_to_empty_lectures;
 
 
-        Course(const Course& course){
+        Course(const Course& course) {
             id = course.id;
             lectures = course.lectures;
             auto head = course.empty_lecture.head;
@@ -56,8 +55,6 @@ class Course {
                 os << c.lectures[i] << std::endl;
             return os;
         }
-
-
 };
 
 #endif //HW1_COURSE_H

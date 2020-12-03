@@ -1,7 +1,7 @@
 #include "CoursesManager.h"
 
 StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
-//     auto* new_course = new Course(courseID, numOfClasses);
+
     Course new_course(courseID, numOfClasses);
     for (int i = 0; i < numOfClasses; ++i)
         new_course.lectures[i] = Lecture(i, 0, courseID);
@@ -9,6 +9,7 @@ StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
     if(course_tree.insert_value(new_course) && empty_courses_id.insert_value(courseID)) {
         // we need to keep track of the smallest empty course for GetMostViewed.
         smallest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root());
+        lectures_counter += numOfClasses;
         return SUCCESS;
     }
 
@@ -34,6 +35,7 @@ StatusType CoursesManager::RemoveCourse(int courseID) {
     }
 
     course_tree.delete_value(course_tree.get_root(), temp_node->data);
+    lectures_counter -= temp_node->data.lectures.size();
     return SUCCESS;
 }
 
@@ -84,6 +86,10 @@ StatusType CoursesManager::TimeViewed(int courseID, int classID, int *timeViewed
 }
 
 StatusType CoursesManager::GetMostViewedClasses(int numOfClasses, int *courses, int *classes) {
+
+    if(numOfClasses > lectures_counter)
+        return  FAILURE;
+
     int remained = numOfClasses;
     int counted = 0;
     watched_lecture_tree.reverse_in_order(watched_lecture_tree.get_root(), &remained, &counted, courses, classes);
@@ -98,5 +104,13 @@ StatusType CoursesManager::GetMostViewedClasses(int numOfClasses, int *courses, 
     }
 
     return SUCCESS;
+}
+
+void CoursesManager::Quit() {
+   // course_tree.delete_node(course_tree.get_root());
+//    watched_lecture_tree.delete_node(watched_lecture_tree.get_root());
+//    empty_courses_id.delete_node(empty_courses_id.get_root());
+//    smallest_empty_course = nullptr;
+//    lectures_counter = 0;
 }
 

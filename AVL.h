@@ -7,26 +7,29 @@
 template <class T>
 class AVLTree {
     public:
-        explicit AVLTree() : my_root(nullptr) { nodes_counter = 0; }
-
+        explicit AVLTree() : my_root(nullptr), nodes_counter(0) {}
         ~AVLTree();
         AVLNode<T>* find_value(AVLNode<T>* root, const T& value) const;
-        AVLNode<T>* get_root() const { return my_root; }
-        int  get_tree_height(AVLNode<T>* root) const;
-        int  get_balance_factor(AVLNode<T>* current_node) const;
-        AVLNode<T>* rotate_left (AVLNode<T>* current_node);
-        AVLNode<T>* rotate_right(AVLNode<T>* current_node);
-        bool insert_value(const T& value);
         AVLNode<T>* delete_value(AVLNode<T>* root, const T &value);
-        void in_order (AVLNode<T>* root) const;
-        void reverse_in_order(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const;
-        int nodes_counter;
+        AVLNode<T>* get_root() const { return my_root; }
         AVLNode<T>* find_min(AVLNode<T>* root);
 
+        void reverse_in_order(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const;
+        void in_order (AVLNode<T>* root) const;
+        bool insert_value(const T& value);
+        void delete_node(AVLNode<T>* node);
     private:
         AVLNode<T>* my_root;
+        int nodes_counter;
+
+        AVLNode<T>* rotate_left (AVLNode<T>* current_node);
+        AVLNode<T>* rotate_right(AVLNode<T>* current_node);
+
         bool insert_node(AVLNode<T>* root, const T& value);
-        void delete_node(AVLNode<T>* node);
+
+
+        int get_balance_factor(AVLNode<T>* current_node) const;
+        int get_tree_height(AVLNode<T>* root) const;
 };
 
 template <class T>
@@ -35,10 +38,10 @@ AVLNode<T>* AVLTree<T>::find_min(AVLNode<T>* root) {
         return nullptr;
     if(root == nullptr)
         return nullptr;
-    else if(root->left == nullptr)
+    else if(root->get_left() == nullptr)
         return root;
     else
-        return find_min(root->left);
+        return find_min(root->get_left());
 }
 
 template <class T>
@@ -49,9 +52,9 @@ AVLTree<T>::~AVLTree() {
 
 template <class T>
 void AVLTree<T>::delete_node(AVLNode<T>* node) {
+    // deletes all subtree of node and node itself.
     if(nodes_counter <= 0)
         return;
-    // deletes all subtree of node and node itself.
     if(node) {
         delete_node(node->get_left());
         delete_node(node->get_right());
@@ -123,6 +126,8 @@ bool AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
 
 template <class T>
 void AVLTree<T>::in_order(AVLNode<T>* root) const {
+    if(nodes_counter <= 0)
+        return;
     if(root) {
         in_order(root->get_left());
         root->print_node();
@@ -225,40 +230,61 @@ AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
 
 template <class T>
 AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
+
     // dont even try to delete from an empty tree.
     if(nodes_counter == 0) {
         my_root = nullptr;
         return nullptr;
     }
 
-    AVLNode<T>* temp;
-    // Element not found
-    if(root == nullptr)
-        return nullptr;
-    // Searching for element
-    else if(value < root->data)
+    // STEP 1: PERFORM STANDARD BST DELETE
+    if (root == nullptr)
+        return root;
+
+    // If the key to be deleted is smaller
+    // than the root's key, then it lies
+    // in left subtree
+    if (value < root->get_value())
         root->set_left(delete_value(root->get_left(), value));
-    else if(value > root->data)
+
+        // If the key to be deleted is greater
+        // than the root's key, then it lies
+        // in right subtree
+    else if (value > root->get_value())
         root->set_right(delete_value(root->get_right(), value));
-    // Element found with 2 children
-    else if(root->get_left() && root->get_right()) {
-        // go right, and than all the way left.
-        temp = find_min(root->get_right());
-        root->data = temp->data;
-        root->set_right(delete_value(root->get_right(), root->data));
-    }
-    // With one or zero children.
+
+        // if key is same as root's key, then
+        // This is the node to be deleted
     else {
-        temp = root;
-        // zero children
-        if(root->get_left() == nullptr && root->get_right() == nullptr)
-            root = nullptr;
-        else if(root->get_left() == nullptr)
-            root = root->get_right();
-        else if(root->get_right() == nullptr)
-            root = root->get_left();
-        delete temp;
-        nodes_counter--;
+        // node with only one child or no child
+        if ((root->get_left() == nullptr) || (root->get_right() == nullptr)) {
+            AVLNode<T> *temp = root->get_left() ? root->get_left() : root->get_right();
+
+            // No child case
+            if (temp == nullptr) {
+                temp = root;
+                root = nullptr;
+            }
+            else // One child case
+                *root = *temp; // Copy the contents of
+            // the non-empty child
+            //delete temp;
+            nodes_counter--;
+            if(nodes_counter == 1)
+                root->set_parent(nullptr);
+        }
+        else {
+            // node with two children: Get the inorder
+            // successor (smallest in the right subtree)
+            AVLNode<T>* temp = find_min(root->get_right());
+
+            // Copy the inorder successor's
+            // data to this node
+            root->data = temp->get_value();
+
+            // Delete the inorder successor
+            root->set_right(delete_value(root->get_right(), temp->get_value()));
+        }
     }
 
     if(root == nullptr)

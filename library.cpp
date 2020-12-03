@@ -53,3 +53,21 @@ StatusType WatchClass(void *DS, int courseID, int classID, int time) {
         return ALLOCATION_ERROR;
     }
 }
+
+StatusType GetMostViewedClasses(void *DS, int numOfClasses, int *courses, int *classes) {
+    if(numOfClasses <= 0 || DS == nullptr)
+        return INVALID_INPUT;
+    try {
+        StatusType status(((CoursesManager *)DS)->GetMostViewedClasses(numOfClasses, courses, classes));
+        return status;
+    }
+    catch (const std::bad_alloc&) {
+        return ALLOCATION_ERROR;
+    }
+}
+
+void Quit(void** DS) {
+    ((CoursesManager *)DS)->Quit();
+    *DS = nullptr;
+}
+

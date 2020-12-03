@@ -6,26 +6,27 @@ class AVLNode {
 public:
     explicit AVLNode(const T& value) : data(value), left(nullptr), right(nullptr), parent(nullptr), height(0), balance_factor(0) {}
     ~AVLNode() = default;
-    const T& get_value() const { return data; }
-    T& get_value() { return data; }
+    T data;
+
+    //T& get_value() { return data; }
     void set_balanced_factor(int new_balance_factor) { balance_factor = new_balance_factor; }
     void set_parent(AVLNode* new_parent) { this->parent = new_parent; }
     void set_right(AVLNode* new_right)   { this->right = new_right;}
     void set_left(AVLNode* new_left)     { this->left = new_left;}
     void set_height(int new_height)      { this->height = new_height; }
 
-    void print_node() const { std::cout << data << std::endl; }
-
-    int get_balance_factor() { return balance_factor; }
+    const T& get_value() const           { return data; }
+    int get_balance_factor() const       { return balance_factor; }
     int static get_height(AVLNode* root);
 
+    void print_node() const { std::cout << data << std::endl; }
     AVLNode* get_parent() const { return parent; }
     AVLNode* get_right()  const { return right; }
     AVLNode* get_left()   const { return left; }
-    T     data;
+
+private:
     AVLNode* left;
     AVLNode* right;
-private:
     AVLNode* parent;
     int height;
     int balance_factor;
