@@ -4,6 +4,15 @@
 #include <iostream>
 #include "AVLNode.h"
 
+template<class T>
+static AVLNode<T>* remove_leaf(AVLNode<T>* node, bool delete_node = true);
+
+template<class T>
+static AVLNode<T>* remove_node_with_one_child(AVLNode<T>* node, bool delete_node = true);
+
+
+
+
 template <class T>
 class AVLTree {
     public:
@@ -16,16 +25,19 @@ class AVLTree {
 
         void reverse_in_order(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const;
         void in_order (AVLNode<T>* root) const;
-        bool insert_value(const T& value);
+        AVLNode<T>* insert_value(const T& value);
         void delete_node(AVLNode<T>* node);
-    private:
+        AVLNode<T>* remove_root();
+        AVLNode<T>* balance_sub_tree(AVLNode<T>* root);
+        AVLNode<T>* remove_node_with_two_child(AVLNode<T>* node, bool delete_node = true);
+private:
         AVLNode<T>* my_root;
         int nodes_counter;
 
         AVLNode<T>* rotate_left (AVLNode<T>* current_node);
         AVLNode<T>* rotate_right(AVLNode<T>* current_node);
 
-        bool insert_node(AVLNode<T>* root, const T& value);
+        AVLNode<T>* insert_node(AVLNode<T>* root, const T& value);
 
 
         int get_balance_factor(AVLNode<T>* current_node) const;
@@ -59,17 +71,18 @@ void AVLTree<T>::delete_node(AVLNode<T>* node) {
         delete_node(node->get_left());
         delete_node(node->get_right());
         delete node;
+        nodes_counter--;
     }
 }
 
 template <class T>
-bool AVLTree<T>::insert_value(const T& value) {
+AVLNode<T>* AVLTree<T>::insert_value(const T& value) {
     if(my_root == nullptr || nodes_counter == 0) {
         // Creating a root, if tree is empty.
         auto* new_node = new AVLNode<T>(value);
         my_root = new_node;
         nodes_counter++;
-        return true;
+        return new_node;
     }
     else
         return(insert_node(my_root, value));
@@ -81,14 +94,15 @@ static int max(T a, T b) {
 }
 
 template <class T>
-bool AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
+AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
+    AVLNode<T>* new_node = nullptr;
     if(root->get_value() == value)
-        return false;
+        return root;
     else if(value < root->get_value()) {
         if(root->get_left()) // If there is a left child, keep going left.
             insert_node(root->get_left(), value);
         else {
-            auto* new_node = new AVLNode<T>(value);
+            new_node = new AVLNode<T>(value);
             root->set_left(new_node);
             new_node->set_parent(root);
             nodes_counter++;
@@ -98,7 +112,7 @@ bool AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
         if(root->get_right()) // If there is a right child, keep going right.
             insert_node(root->get_right(), value);
         else {
-            auto* new_node = new AVLNode<T>(value);
+            new_node = new AVLNode<T>(value);
             root->set_right(new_node);
             new_node->set_parent(root);
             nodes_counter++;
@@ -121,7 +135,7 @@ bool AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
     balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
     root->set_balanced_factor(balance);
     root->set_height(max(get_tree_height(root->get_left()), get_tree_height(root->get_right())) + 1);
-    return true;
+    return new_node;
 }
 
 template <class T>
@@ -236,80 +250,200 @@ AVLNode<T>* AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
     // value not in tree
     if(temp_node == nullptr)
         return nullptr;
-
     AVLNode<T>* left = temp_node->get_left();
     AVLNode<T>* right = temp_node->get_right();
+    if(temp_node == my_root){//the node we removing is the root
+        temp_node = remove_root();
+        nodes_counter++;// because remove_root already update the node_counter
+    }else if(left == nullptr & right == nullptr){//we removing a leaf
+        temp_node = remove_leaf(temp_node);
+    }else if(left == nullptr || right == nullptr){ // we removing a node with one child
+        temp_node = remove_node_with_one_child(temp_node);
+    }else { // we removing a node with two child
+        temp_node = remove_node_with_two_child(temp_node);
+    }
+    nodes_counter--;
+    ///we need to roll and fix the tree;
 
-    // we are the root
-    if(my_root == temp_node) {
-        // we have no children.
-        if (left == nullptr && right == nullptr) {
-            delete temp_node;
-            my_root = nullptr;
-            nodes_counter = 0;
+    // Balance the tree.
+    while (temp_node){
+        temp_node = balance_sub_tree(temp_node);
+    }
+    return nullptr; /// we need to return someting else i think
+}
+
+template<class T>
+AVLNode<T>* remove_leaf(AVLNode<T>* node, bool delete_node){
+    AVLNode<T> *parent = node->get_parent();
+     //we are left child
+        if(node->get_parent()->get_left() == node)
+            node->get_parent()->set_left(nullptr);
+        else// we are tight child
+            node->get_parent()->set_right(nullptr);
+        if (delete_node)
+            delete node;
+    return parent;
+}
+
+template<class T>
+static AVLNode<T>* remove_node_with_one_child(AVLNode<T>* node, bool delete_node){
+    AVLNode<T>* parent = node->get_parent();
+    AVLNode<T>* left = node->get_left();
+    AVLNode<T>* right = node->get_right();
+    // we are left child.
+    if(node->get_parent()->get_left() == node) {
+        // we have right child.
+        if(left == nullptr) {
+            node->get_parent()->set_left(right);
+            right->set_parent(node->get_parent());
+            if (delete_node)
+                delete node;
+            return parent;
         }
-        // we have left child.
-        else if (left != nullptr && right == nullptr) {
-            left->set_parent(nullptr);
+        else { // we have left child.
+            node->get_parent()->set_left(left);
+            left->set_parent(node->get_parent());
+            if (delete_node)
+                delete node;
+            return parent;
+        }
+    }
+    else { // we are right child.
+        if(left == nullptr) {// we have right child
+            node->get_parent()->set_right(right);
+            right->set_parent(node->get_parent());
+            if (delete_node)
+                delete node;
+            return parent;
+        }
+        else { // we have left child.
+            node->get_parent()->set_right(left);
+            left->set_parent(node->get_parent());
+            if (delete_node)
+                delete node;
+            return parent;
+        }
+    }
+}
+
+template<class T>
+AVLNode<T>* AVLTree<T>::remove_node_with_two_child(AVLNode<T>* node, bool delete_node){
+    AVLNode<T>* left = node->get_left();
+    AVLNode<T>* right = node->get_right();
+    AVLNode<T>* next_in_order = find_min(right);
+    if(next_in_order->get_right() == nullptr)
+        remove_leaf(next_in_order, false);
+    else
+        remove_node_with_one_child(next_in_order, false);
+    if(next_in_order->get_parent() == node){// the next in order node is the right child of the node we want to delete
+        next_in_order->set_parent(node->get_parent());
+        if(node->get_parent()->get_left() == node){// node is a left child
+            node->get_parent()->set_left(next_in_order);
+        }else// node is a right child
+            node->get_parent()->set_right(next_in_order);
+        next_in_order->set_left(left);
+        left->set_parent(next_in_order);
+        if(delete_node)
+            delete node;
+        return next_in_order;
+    }
+    next_in_order->get_parent()->set_left(next_in_order->get_right());
+    if(next_in_order->get_right() != nullptr)
+        next_in_order->get_right()->set_parent(next_in_order->get_parent());
+    AVLNode<T>* Node_to_fix_roll_from = next_in_order->get_parent();
+    next_in_order->set_left(left);
+    next_in_order->set_right(right);
+    next_in_order->set_parent(node->get_parent());
+    if(node->get_parent()->get_left() == node){// node is a left child
+        node->get_parent()->set_left(next_in_order);
+    }else{// node is a right child
+        node->get_parent()->set_right(next_in_order);
+    }
+    left->set_parent(next_in_order);
+    right->set_parent(next_in_order);
+    if(delete_node)
+        delete node;
+    return Node_to_fix_roll_from;
+}
+
+template<class T>
+AVLNode<T> *AVLTree<T>::remove_root() {
+    AVLNode<T>* node = my_root;
+    AVLNode<T>* left = node->get_left();
+    AVLNode<T>* right = node->get_right();
+    // we have no children.
+    if (left == nullptr && right == nullptr) {
+        delete node;
+        my_root = nullptr;
+        nodes_counter = 0;
+        return nullptr;
+    }
+    //we have one child
+    else if(left == nullptr || right == nullptr){
+        if(left != nullptr){
             my_root = left;
-            delete temp_node;
+            left->set_parent(nullptr);
         }
-        // we have right child
-        else if (left == nullptr && right != nullptr) {
-            right->set_parent(nullptr);
+        else {
             my_root = right;
-            delete temp_node;
+            right->set_parent(nullptr);
         }
-        // we have two children
-        else if(left != nullptr && right != nullptr) {
-            AVLNode<T>* next_in_order = find_min(right);
-            next_in_order->get_parent()->set_left(nullptr);
-            next_in_order->set_left(left);
-            next_in_order->set_right(right);
-            next_in_order->set_parent(nullptr);
-            my_root = next_in_order;
-        }
-    }
-    // we are leaf
-    else if(left == nullptr && right == nullptr) {
-        // we are left child
-        if(temp_node->get_parent()->get_left() == temp_node)
-            temp_node->get_parent()->set_left(nullptr);
-        else
-            temp_node->get_parent()->set_right(nullptr);
-        delete temp_node;
+        delete node;
         nodes_counter--;
-    }
-    // we have one child
-    else if(left == nullptr || right == nullptr) {
-        // we are left child.
-        if(temp_node->get_parent()->get_left() == temp_node) {
-            // we have right child.
-            if(left == nullptr) {
-                temp_node->get_parent()->set_left(temp_node->get_right());
-                temp_node->get_right()->set_parent(temp_node->get_parent());
-            }
-            else { // we have left child.
-                temp_node->get_parent()->set_left(temp_node->get_left());
-                temp_node->get_left()->set_parent(temp_node->get_parent());
-            }
-        }
-        else { // we are right child.
-            if(left == nullptr) {
-                temp_node->get_parent()->set_right(temp_node->get_right());
-                temp_node->get_right()->set_parent(temp_node->get_parent());
-            }
-            else { // we have left child.
-                temp_node->get_parent()->set_right(temp_node->get_left());
-                temp_node->get_left()->set_parent(temp_node->get_parent());
-            }
-        }
-        delete temp_node;
-        nodes_counter--;
+        return my_root;
     }
     // we have two children
-    else if(left != nullptr && right != nullptr) {
+    else {
+        AVLNode<T>* next_in_order = find_min(right);
+        //next node in order is the right node from the root
+        if(next_in_order->get_parent() == node){
+            next_in_order->set_parent(nullptr);
+            next_in_order->set_left(node->get_left());
+            node->get_left()->set_parent(next_in_order);
+            delete node;
+            my_root = next_in_order;
+            nodes_counter--;
+            return my_root;
+        }
+        //next in order node is a leaf
+        if(next_in_order->get_right() == nullptr)
+            remove_leaf(next_in_order, false);
+        else
+            remove_node_with_one_child(next_in_order, false);
+        next_in_order->get_parent()->set_left(next_in_order->get_right());
+        if(next_in_order->get_right() != nullptr)
+            next_in_order->get_right()->set_parent(next_in_order->get_parent());
+        AVLNode<T>* Node_to_fix_roll_from = next_in_order->get_parent();
+        next_in_order->set_left(left);
+        next_in_order->set_right(right);
+        next_in_order->set_parent(nullptr);
+        left->set_parent(next_in_order);
+        right->set_parent(next_in_order);
+        delete node;
+        my_root = next_in_order;
+        nodes_counter--;
+        return Node_to_fix_roll_from;
     }
+}
+
+template<class T>
+AVLNode<T>* AVLTree<T>::balance_sub_tree(AVLNode<T>* root){
+    int balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
+    root->set_balanced_factor(balance);
+    if(balance > 1) { // Left tree is unbalanced
+        if(get_balance_factor(root->get_left()) < 0) // LR rotation needed.
+            rotate_left(root->get_left());
+        rotate_right(root);
+    }
+    else if(balance < -1) { // Right tree is unbalanced.
+        if(get_balance_factor(root->get_right()) > 0) // RL rotation needed.
+            rotate_right(root->get_right());
+        rotate_left(root);
+    }
+    balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
+    root->set_balanced_factor(balance);
+    root->set_height(max(get_tree_height(root->get_left()), get_tree_height(root->get_right())) + 1);
+    return root->get_parent();
 }
 
 #endif // GENERIC_AVL_H

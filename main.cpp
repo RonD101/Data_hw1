@@ -16,20 +16,38 @@ void weird_in_order(AVLNode<int>* root)
 
 int main() {
 
+//    AVLTree<int> tree;
+//    tree.insert_value(1);
+//    tree.insert_value(2);
+//    tree.insert_value(4);
+//    tree.insert_value(5);
+//    tree.insert_value(7);
+//    tree.insert_value(9);
+//    tree.delete_value(tree.get_root(),9);
+//    tree.delete_value(tree.get_root(),92);
+//    tree.delete_value(tree.get_root(),9);
+//    tree.delete_value(tree.get_root(),1);
+//    tree.delete_value(tree.get_root(),2);
+//    tree.delete_value(tree.get_root(),4);
+//    tree.delete_value(tree.get_root(),5);
+//    tree.delete_value(tree.get_root(),7);
+//    tree.delete_value(tree.get_root(),1);
+//    tree.in_order(tree.get_root());
+
+    ////////
     auto* DS = Init();
     AddCourse(DS, 2, 5);
     AddCourse(DS, 1, 10);
     WatchClass(DS, 2, 3, 14);
     WatchClass(DS, 2, 1, 5);
-    WatchClass(DS, 2, 5, 13);
-    WatchClass(DS, 1, 2, 5);
-    RemoveCourse(DS, 1);
-    int courses[15] = {0};
-    int classes[15] = {0};
-
-    GetMostViewedClasses(DS, 5, courses, classes);
-
+    WatchClass(DS, 2, 4, 13);
+//    WatchClass(DS, 1, 2, 5);
+//    RemoveCourse(DS, 1);
+//    int courses[15] = {0};
+//    int classes[15] = {0};
+//    GetMostViewedClasses(DS, 5, courses, classes);
     Quit(&DS);
+    //////////
 //   AVLTree<int> test_order;
 //    for(int i = 0; i < 15; i++)
 //        test_order.insert_value(i);

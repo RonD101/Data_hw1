@@ -6,14 +6,16 @@
 #include "List.h"
 #include "ViewData.h"
 #include <memory>
+#include "EmptyCourse.h"
 
 class CoursesManager {
 public:
     ~CoursesManager() = default;
     AVLTree<Course> course_tree;
     AVLTree<ViewData> watched_lecture_tree;
-    AVLTree<int> empty_courses_id;
-    AVLNode<int>* smallest_empty_course = nullptr;
+//    AVLTree<int> empty_courses_id;
+    AVLTree<EmptyCourse> empty_courses_id;
+    AVLNode<EmptyCourse>* smallest_empty_course = nullptr;
     int lectures_counter = 0;
     StatusType AddCourse (int courseID, int numOfClasses);
 
