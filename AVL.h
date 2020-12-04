@@ -78,8 +78,9 @@ AVLNode<T>* AVLTree<T>::insert_value(const T& value) {
         nodes_counter++;
         return new_node;
     }
-    else
-        return(insert_node(my_root, value));
+    else {
+        return (insert_node(my_root, value));
+    }
 }
 
 template <class T>
