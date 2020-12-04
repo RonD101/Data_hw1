@@ -1,8 +1,9 @@
 #ifndef HW1_LECTURE_H
 #define HW1_LECTURE_H
+
 class Lecture {
 public:
-    Lecture(int id = 0, int timed_watched = 0, int my_course_id = 0) : id(id), timed_watched(timed_watched), my_course_id(my_course_id) {}
+    explicit Lecture(int id = 0, int timed_watched = 0, int my_course_id = 0) : id(id), timed_watched(timed_watched), my_course_id(my_course_id) {}
     int id;
     int timed_watched;
     int my_course_id;
@@ -36,4 +37,5 @@ public:
         return os;
     }
 };
+
 #endif //HW1_LECTURE_H

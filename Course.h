@@ -17,7 +17,6 @@ class Course {
         List<int> empty_lecture;
         TemArray<Node<int>*> pointers_to_empty_lectures;
 
-
         Course(const Course& course) {
             id = course.id;
             lectures = course.lectures;

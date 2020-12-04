@@ -6,7 +6,6 @@
 #define HW3PARTB_TEMARRAY_H
 
 #include <iostream>
-//#include "Auxiliaries.h"
 #include <string>
 
 /**
@@ -23,8 +22,6 @@
 *   operator=      - Assignment of one matrix to the other
 *   operator[]      - Return reference to value
 */
-
-
     template<class T>
     class TemArray {
         T *data;

@@ -7,6 +7,7 @@ void *Init() {
 }
 
 StatusType AddCourse(void *DS, int courseID, int numOfClasses) {
+
     if(numOfClasses <= 0 || courseID <= 0 || DS == nullptr)
         return INVALID_INPUT;
     try {
@@ -19,6 +20,7 @@ StatusType AddCourse(void *DS, int courseID, int numOfClasses) {
 }
 
 StatusType RemoveCourse(void *DS, int courseID) {
+
     if(courseID <= 0 || DS == nullptr)
         return INVALID_INPUT;
     try {
@@ -31,6 +33,7 @@ StatusType RemoveCourse(void *DS, int courseID) {
 }
 
 StatusType TimeViewed(void *DS, int courseID, int classID, int *timeViewed) {
+
     if(classID < 0 || courseID <= 0 || DS == nullptr)
         return INVALID_INPUT;
     try {
@@ -43,6 +46,7 @@ StatusType TimeViewed(void *DS, int courseID, int classID, int *timeViewed) {
 }
 
 StatusType WatchClass(void *DS, int courseID, int classID, int time) {
+
     if(time <= 0 || classID < 0 || courseID <= 0 || DS == nullptr)
         return INVALID_INPUT;
     try {
@@ -55,6 +59,7 @@ StatusType WatchClass(void *DS, int courseID, int classID, int time) {
 }
 
 StatusType GetMostViewedClasses(void *DS, int numOfClasses, int *courses, int *classes) {
+
     if(numOfClasses <= 0 || DS == nullptr)
         return INVALID_INPUT;
     try {
@@ -67,9 +72,7 @@ StatusType GetMostViewedClasses(void *DS, int numOfClasses, int *courses, int *c
 }
 
 void Quit(void** DS) {
+
     delete static_cast<CoursesManager*>(*DS);
-//    ((CoursesManager *)DS)->Quit();
-//    delete (CoursesManager *)DS;
     *DS = nullptr;
 }
-

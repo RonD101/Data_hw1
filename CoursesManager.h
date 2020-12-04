@@ -13,11 +13,11 @@ public:
     ~CoursesManager() = default;
     AVLTree<Course> course_tree;
     AVLTree<ViewData> watched_lecture_tree;
-//    AVLTree<int> empty_courses_id;
-    AVLTree<EmptyCourse> empty_courses_id;
+    AVLTree<EmptyCourse> empty_courses_tree;
     AVLNode<EmptyCourse>* strongest_empty_course = nullptr;
     AVLNode<ViewData>* strongest_lecture = nullptr;
     int lectures_counter = 0;
+
     StatusType AddCourse (int courseID, int numOfClasses);
 
     StatusType RemoveCourse(int courseID);
@@ -27,8 +27,6 @@ public:
     StatusType TimeViewed(int courseID, int classID, int *timeViewed);
 
     StatusType GetMostViewedClasses(int numOfClasses, int *courses, int *classes);
-
-    void Quit();
 
 };
 

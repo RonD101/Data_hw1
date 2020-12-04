@@ -12,8 +12,8 @@ StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
     AVLNode<Course>* current_course = course_tree.insert_value(new_course);
 
     // we need to keep track of the smallest empty course for GetMostViewed.
-    empty_courses_id.insert_value(EmptyCourse(courseID,current_course));
-    strongest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root()); /////////////////
+    empty_courses_tree.insert_value(EmptyCourse(courseID,current_course));
+    strongest_empty_course = empty_courses_tree.find_min(empty_courses_tree.get_root()); /////////////////
     lectures_counter += numOfClasses;
     return SUCCESS;
 }
@@ -24,9 +24,9 @@ StatusType CoursesManager::RemoveCourse(int courseID) {
     if(course_to_remove == nullptr)
         return FAILURE;
     // remove course from empty tree.
-    empty_courses_id.delete_value(empty_courses_id.get_root(), EmptyCourse(courseID, course_to_remove));
+    empty_courses_tree.delete_value(empty_courses_tree.get_root(), EmptyCourse(courseID, course_to_remove));
     // we need to keep track of the smallest empty course for GetMostViewed.
-    strongest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root()); /////////////////////
+    strongest_empty_course = empty_courses_tree.find_min(empty_courses_tree.get_root()); /////////////////////
 
     // remove all lectures associated with the course from the "big" lecture tree.
     for (int i = 0; i < course_to_remove->data.lectures.size(); ++i) {
@@ -71,10 +71,9 @@ StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
 
     // if no empty lectures left in course, remove it from empty_tree.
     if(temp_node->data.empty_lecture.head == nullptr) {
-        empty_courses_id.delete_value(empty_courses_id.get_root(), EmptyCourse(courseID, temp_node));
-        strongest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root()); //////////////////////
+        empty_courses_tree.delete_value(empty_courses_tree.get_root(), EmptyCourse(courseID, temp_node));
+        strongest_empty_course = empty_courses_tree.find_min(empty_courses_tree.get_root()); //////////////////////
     }
-
     return SUCCESS;
 }
 
@@ -96,14 +95,15 @@ StatusType CoursesManager::TimeViewed(int courseID, int classID, int *timeViewed
 StatusType CoursesManager::GetMostViewedClasses(int numOfClasses, int *courses, int *classes) {
 
     AVLNode<ViewData>* temp_most_viewed = strongest_lecture;
-    //AVLNode<int>* temp_most_viewed = &max;
+
     // there aren't enough lectures in the system!
     if(numOfClasses > lectures_counter)
         return FAILURE;
 
     int remained = numOfClasses;
     int counted = 0;
-    while(temp_most_viewed != nullptr && remained > 0){
+    // start printing from the watched lecture tree.
+    while(temp_most_viewed != nullptr && remained > 0) {
         courses[counted] = temp_most_viewed->data.getCourse();
         classes[counted] = temp_most_viewed->data.getLecture();
         counted++;
@@ -111,8 +111,15 @@ StatusType CoursesManager::GetMostViewedClasses(int numOfClasses, int *courses, 
         watched_lecture_tree.reverse_in_order(temp_most_viewed->get_left(), &remained, &counted, courses, classes);
         temp_most_viewed = temp_most_viewed->get_parent();
     }
+
+    // printed enough lectures.
+    if (counted >= numOfClasses) {
+        return SUCCESS;
+    }
+
+    // start printing from the empty printing tree.
     AVLNode<EmptyCourse>* temp_strongest_empty_course = strongest_empty_course;
-    while(temp_strongest_empty_course != nullptr && remained > 0){
+    while(temp_strongest_empty_course != nullptr && remained > 0) {
         Node<int>* head_list = temp_strongest_empty_course->data.getCoursePtr()->data.empty_lecture.head;
         while (head_list && remained > 0){
             courses[counted] = temp_strongest_empty_course->data.getCourseID();
@@ -121,25 +128,8 @@ StatusType CoursesManager::GetMostViewedClasses(int numOfClasses, int *courses, 
             counted++;
             remained--;
         }
-//        empty_courses_id.reverse_in_order(temp_strongest_empty_course->get_left(), &remained, &counted, courses, classes);
+        //empty_courses_tree.reverse_in_order_empty(temp_strongest_empty_course->get_left(), &remained, &counted, courses, classes);
         temp_strongest_empty_course = temp_strongest_empty_course->get_parent();
     }
-
-    // printed enough lectures.
-    if (counted >= numOfClasses) {
-        return SUCCESS;
-    }
-
-
-
     return SUCCESS;
 }
-
-void CoursesManager::Quit() {
-   // course_tree.delete_node(course_tree.get_root());
-//    watched_lecture_tree.delete_node(watched_lecture_tree.get_root());
-//    empty_courses_id.delete_node(empty_courses_id.get_root());
-//    smallest_empty_course = nullptr;
-//    lectures_counter = 0;
-}
-

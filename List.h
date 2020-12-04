@@ -1,7 +1,3 @@
-//
-// Created by Ron Dahan on 01/12/2020.
-//
-
 #ifndef HW1_LIST_H
 #define HW1_LIST_H
 
@@ -9,15 +5,14 @@
 
 template<class T>
 class List {
-
-public:
-    Node<T> *head;
-    explicit List():head(nullptr){}
-    ~List();
-    Node<T>* addNodeAfter(Node<T> *node, T data);
-    void addNodeBefore(Node<T> *node, T data);
-    void removeNode(Node<T> *node);
-    Node<T>* addAtStart(T data);
+    public:
+        Node<T> *head;
+        explicit List():head(nullptr){}
+        ~List();
+        Node<T>* addNodeAfter(Node<T> *node, T data);
+        void addNodeBefore(Node<T> *node, T data);
+        void removeNode(Node<T> *node);
+        Node<T>* addAtStart(T data);
 };
 
 template <class T>
@@ -47,6 +42,7 @@ void List<T>::removeNode(Node<T> *node) {
 
 template<class T>
 Node<T>* List<T>::addNodeAfter(Node<T> *node,T data) {
+
     if (node == nullptr)
         return nullptr;
     auto* new_node = new Node<T>(data);
@@ -61,10 +57,11 @@ Node<T>* List<T>::addNodeAfter(Node<T> *node,T data) {
 
 template<class T>
 void List<T>::addNodeBefore(Node<T> *node, T data) {
+
     if(node == nullptr)
         return;
     Node<T>* new_node = new Node<T>(data);
-    if(node->getPrev() != nullptr){
+    if(node->getPrev() != nullptr) {
         new_node->setPrev(node->getPrev());
         (node->getPrev())->setNext(new_node);
     }
@@ -73,9 +70,10 @@ void List<T>::addNodeBefore(Node<T> *node, T data) {
 }
 
 template<class T>
-Node<T>* List<T>::addAtStart(T data) {
+Node<T>* List<T>::addAtStart(T data)
+{
     Node<T>* new_node = new Node<T>(data);
-    if(head == nullptr){
+    if(head == nullptr) {
         head = new_node;
         head->setNext(nullptr);
         return new_node;
@@ -88,12 +86,11 @@ Node<T>* List<T>::addAtStart(T data) {
 
 template<class T>
 List<T>::~List() {
-    while (head){
+    while (head) {
         Node<T>* tmp = head;
         head = head->getNext();
         delete tmp;
     }
 }
-
 
 #endif //HW1_LIST_H

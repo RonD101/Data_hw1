@@ -20,6 +20,7 @@ class AVLTree {
         AVLNode<T>* get_root() const { return my_root; }
         AVLNode<T>* find_min(AVLNode<T>* root);
 
+        void reverse_in_order_empty(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const;
         void reverse_in_order(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const;
         void in_order (AVLNode<T>* root) const;
         AVLNode<T>* insert_value(const T& value);
@@ -40,6 +41,7 @@ private:
 
 template <class T>
 AVLNode<T>* AVLTree<T>::find_min(AVLNode<T>* root) {
+
     if(nodes_counter <= 0)
         return nullptr;
     if(root == nullptr)
@@ -52,12 +54,14 @@ AVLNode<T>* AVLTree<T>::find_min(AVLNode<T>* root) {
 
 template <class T>
 AVLTree<T>::~AVLTree() {
+
     if(my_root)
         delete_node(my_root);
 }
 
 template <class T>
 void AVLTree<T>::delete_node(AVLNode<T>* node) {
+
     // deletes all subtree of node and node itself.
     if(nodes_counter <= 0)
         return;
@@ -71,6 +75,7 @@ void AVLTree<T>::delete_node(AVLNode<T>* node) {
 
 template <class T>
 AVLNode<T>* AVLTree<T>::insert_value(const T& value) {
+
     if(my_root == nullptr || nodes_counter == 0) {
         // Creating a root, if tree is empty.
         auto* new_node = new AVLNode<T>(value);
@@ -90,6 +95,7 @@ static int max(T a, T b) {
 
 template <class T>
 AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
+
     AVLNode<T>* new_node = nullptr;
     if(root->get_value() == value)
         return root;
@@ -135,6 +141,7 @@ AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
 
 template <class T>
 void AVLTree<T>::in_order(AVLNode<T>* root) const {
+
     if(nodes_counter <= 0)
         return;
     if(root) {
@@ -144,12 +151,9 @@ void AVLTree<T>::in_order(AVLNode<T>* root) const {
     }
 }
 
-// Traverse the right subtree by recursively calling the reverse in-order function.
-// Access the data part of the current node.
-// Traverse the left subtree by recursively calling the reverse in-order function.
 template <class T>
 void AVLTree<T>::reverse_in_order(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const {
-    // need to implement
+
     if(root) {
         reverse_in_order(root->get_right(), remained, counted, courses, classes);
         if(*remained <= 0)
@@ -163,8 +167,25 @@ void AVLTree<T>::reverse_in_order(AVLNode<T>* root, int* remained, int* counted,
     }
 }
 
+template<class T>
+void AVLTree<T>::reverse_in_order_empty(AVLNode<T> *root, int *remained, int *counted, int *courses, int *classes) const {
+
+    if(root) {
+        reverse_in_order(root->get_right(), remained, counted, courses, classes);
+        if(*remained <= 0)
+            return;
+        // root->print_node();
+        courses[*counted] = root->data.getCourseID();
+        classes[*counted] = root->data.getLecture();
+        *remained = *remained - 1;
+        *counted = *counted + 1;
+        reverse_in_order(root->get_left(), remained, counted, courses, classes);
+    }
+}
+
 template <class T>
 AVLNode<T>* AVLTree<T>::find_value(AVLNode<T>* root, const T& value) const {
+
     if(root) {
         if (root->get_value() == value)
             return root;
@@ -178,6 +199,7 @@ AVLNode<T>* AVLTree<T>::find_value(AVLNode<T>* root, const T& value) const {
 
 template <class T>
 int AVLTree<T>::get_tree_height(AVLNode<T>* root) const {
+
     if(root == nullptr)
         return -1;
     return AVLNode<T>::get_height(root);
@@ -214,6 +236,7 @@ AVLNode<T>* AVLTree<T>::rotate_left(AVLNode<T>* current_node) {
 
 template <class T>
 AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
+
     // Rotate node
     AVLNode<T>* new_root = current_node->get_left();
     current_node->set_left(new_root->get_right());
