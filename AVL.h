@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "AVLNode.h"
+#include "Node.h"
 
 template<class T>
 static AVLNode<T>* remove_leaf(AVLNode<T>* node, bool delete_node = true);
@@ -19,6 +20,7 @@ class AVLTree {
         bool delete_value(AVLNode<T>* root, const T &value);
         AVLNode<T>* get_root() const { return my_root; }
         AVLNode<T>* find_min(AVLNode<T>* root);
+        AVLNode<T>* find_max(AVLNode<T>* root);
 
         void reverse_in_order_empty(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const;
         void reverse_in_order(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const;
@@ -33,7 +35,7 @@ private:
         int nodes_counter;
         AVLNode<T>* rotate_left (AVLNode<T>* current_node);
         AVLNode<T>* rotate_right(AVLNode<T>* current_node);
-        AVLNode<T>* insert_node(AVLNode<T>* root, const T& value);
+        AVLNode<T>* insert_node(AVLNode<T>* root,const T& value, AVLNode<T>* new_node);
 
         int get_balance_factor(AVLNode<T>* current_node) const;
         int get_tree_height(AVLNode<T>* root) const;
@@ -50,6 +52,19 @@ AVLNode<T>* AVLTree<T>::find_min(AVLNode<T>* root) {
         return root;
     else
         return find_min(root->get_left());
+}
+
+template <class T>
+AVLNode<T>* AVLTree<T>::find_max(AVLNode<T>* root) {
+
+    if(nodes_counter <= 0)
+        return nullptr;
+    if(root == nullptr)
+        return nullptr;
+    else if(root->get_right() == nullptr)
+        return root;
+    else
+        return find_max(root->get_right());
 }
 
 template <class T>
@@ -84,7 +99,9 @@ AVLNode<T>* AVLTree<T>::insert_value(const T& value) {
         return new_node;
     }
     else {
-        return (insert_node(my_root, value));
+       AVLNode<T>* new_node = new AVLNode<T>(value);
+
+        return (insert_node(my_root,value, new_node));
     }
 }
 
@@ -94,16 +111,16 @@ static int max(T a, T b) {
 }
 
 template <class T>
-AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
+AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root,const T& value, AVLNode<T>* new_node) {
 
-    AVLNode<T>* new_node = nullptr;
+    //AVLNode<T>* new_node = nullptr;
     if(root->get_value() == value)
         return root;
     else if(value < root->get_value()) {
         if(root->get_left()) // If there is a left child, keep going left.
-            insert_node(root->get_left(), value);
+            insert_node(root->get_left(), value, new_node);
         else {
-            new_node = new AVLNode<T>(value);
+            //new_node.data = (value);
             root->set_left(new_node);
             new_node->set_parent(root);
             nodes_counter++;
@@ -111,9 +128,9 @@ AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root, const T& value) {
     }
     else {
         if(root->get_right()) // If there is a right child, keep going right.
-            insert_node(root->get_right(), value);
+            insert_node(root->get_right(), value, new_node);
         else {
-            new_node = new AVLNode<T>(value);
+            //new_node = new AVLNode<T>(value);
             root->set_right(new_node);
             new_node->set_parent(root);
             nodes_counter++;
@@ -171,15 +188,19 @@ template<class T>
 void AVLTree<T>::reverse_in_order_empty(AVLNode<T> *root, int *remained, int *counted, int *courses, int *classes) const {
 
     if(root) {
-        reverse_in_order(root->get_right(), remained, counted, courses, classes);
+        reverse_in_order_empty(root->get_right(), remained, counted, courses, classes);
         if(*remained <= 0)
             return;
         // root->print_node();
-        courses[*counted] = root->data.getCourseID();
-        classes[*counted] = root->data.getLecture();
-        *remained = *remained - 1;
-        *counted = *counted + 1;
-        reverse_in_order(root->get_left(), remained, counted, courses, classes);
+        Node<int>* head_list = root->data.getCoursePtr()->data.empty_lecture.head;
+        while (head_list && *remained > 0) {
+            courses[*counted] = root->data.getCourseID();
+            classes[*counted] = head_list->getData();
+            head_list = head_list->getNext();
+            *remained = *remained - 1;
+            *counted = *counted + 1;
+        }
+        reverse_in_order_empty(root->get_left(), remained, counted, courses, classes);
     }
 }
 

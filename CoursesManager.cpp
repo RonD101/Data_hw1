@@ -13,7 +13,8 @@ StatusType CoursesManager::AddCourse(int courseID, int numOfClasses) {
 
     // we need to keep track of the smallest empty course for GetMostViewed.
     empty_courses_tree.insert_value(EmptyCourse(courseID,current_course));
-    strongest_empty_course = empty_courses_tree.find_min(empty_courses_tree.get_root()); /////////////////
+
+    strongest_empty_course = empty_courses_tree.find_max(empty_courses_tree.get_root());
     lectures_counter += numOfClasses;
     return SUCCESS;
 }
@@ -26,7 +27,7 @@ StatusType CoursesManager::RemoveCourse(int courseID) {
     // remove course from empty tree.
     empty_courses_tree.delete_value(empty_courses_tree.get_root(), EmptyCourse(courseID, course_to_remove));
     // we need to keep track of the smallest empty course for GetMostViewed.
-    strongest_empty_course = empty_courses_tree.find_min(empty_courses_tree.get_root()); /////////////////////
+    strongest_empty_course = empty_courses_tree.find_max(empty_courses_tree.get_root());
 
     // remove all lectures associated with the course from the "big" lecture tree.
     for (int i = 0; i < course_to_remove->data.lectures.size(); ++i) {
@@ -72,7 +73,7 @@ StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
     // if no empty lectures left in course, remove it from empty_tree.
     if(temp_node->data.empty_lecture.head == nullptr) {
         empty_courses_tree.delete_value(empty_courses_tree.get_root(), EmptyCourse(courseID, temp_node));
-        strongest_empty_course = empty_courses_tree.find_min(empty_courses_tree.get_root()); //////////////////////
+        strongest_empty_course = empty_courses_tree.find_max(empty_courses_tree.get_root());
     }
     return SUCCESS;
 }
@@ -128,7 +129,7 @@ StatusType CoursesManager::GetMostViewedClasses(int numOfClasses, int *courses, 
             counted++;
             remained--;
         }
-        //empty_courses_tree.reverse_in_order_empty(temp_strongest_empty_course->get_left(), &remained, &counted, courses, classes);
+        empty_courses_tree.reverse_in_order_empty(temp_strongest_empty_course->get_left(), &remained, &counted, courses, classes);
         temp_strongest_empty_course = temp_strongest_empty_course->get_parent();
     }
     return SUCCESS;
