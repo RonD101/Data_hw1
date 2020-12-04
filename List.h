@@ -22,7 +22,8 @@ public:
 
 template <class T>
 void List<T>::removeNode(Node<T> *node) {
-    if(node == nullptr)
+
+    if(node == nullptr || head == nullptr)
         return;
     if(node == head) {
         // node is head with next nodes (more than one item).
@@ -35,9 +36,12 @@ void List<T>::removeNode(Node<T> *node) {
         return;
     }
     // if node is not the last one.
-    if(node->getNext() != nullptr)
+    if(node->getNext() != nullptr) {
         node->getPrev()->setNext(node->getNext());
-    node->getPrev()->setNext(node->getNext());
+        node->getNext()->setPrev(node->getPrev());
+    }
+    else
+        node->getPrev()->setNext(nullptr);
     delete node;
 }
 

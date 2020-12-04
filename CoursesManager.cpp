@@ -57,16 +57,17 @@ StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
     watched_lecture_tree.insert_value(ViewData(courseID, classID, old_time_viewed + time));
     temp_node->data.lectures[classID].add_time(time);
 
-    // if no empty lectures left in course, remove it from empty_tree.
-    if(temp_node->data.empty_lecture.head == nullptr) {
-        empty_courses_id.delete_value(empty_courses_id.get_root(), EmptyCourse(courseID,temp_node));
-        smallest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root());
-    }
-
     // remove class from empty list and set pointer to that list to null (if it is not null already).
     if(temp_node->data.pointers_to_empty_lectures[classID] != nullptr)
         temp_node->data.empty_lecture.removeNode(temp_node->data.pointers_to_empty_lectures[classID]);
     temp_node->data.pointers_to_empty_lectures[classID] = nullptr;
+
+    // if no empty lectures left in course, remove it from empty_tree.
+    if(temp_node->data.empty_lecture.head == nullptr) {
+        empty_courses_id.delete_value(empty_courses_id.get_root(), EmptyCourse(courseID, temp_node));
+        smallest_empty_course = empty_courses_id.find_min(empty_courses_id.get_root());
+    }
+
     return SUCCESS;
 }
 
