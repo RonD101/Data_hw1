@@ -153,7 +153,7 @@ void AVLTree<T>::reverse_in_order(AVLNode<T>* root, int* remained, int* counted,
         reverse_in_order(root->get_right(), remained, counted, courses, classes);
         if(*remained <= 0)
             return;
-        root->print_node();
+        // root->print_node();
         courses[*counted] = root->data.getCourse();
         classes[*counted] = root->data.getLecture();
         *remained = *remained - 1;

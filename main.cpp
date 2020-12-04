@@ -43,18 +43,21 @@ int main() {
     AddCourse(DS, 1, 10);
     WatchClass(DS, 2, 3, 14);
     WatchClass(DS, 2, 1, 5);
+    WatchClass(DS, 2, 7, 59);
     WatchClass(DS, 2, 4, 13);
-    RemoveCourse(DS, 2);
+    WatchClass(DS, 6, 1, 65);
     WatchClass(DS, 1, 2, 5);
     WatchClass(DS, 9, 6, 55);
     WatchClass(DS, 2, 12, 59);
-    WatchClass(DS, 2, 7, 59);
-    WatchClass(DS, 6, 1, 65);
+    WatchClass(DS, 5, 1, 13);
     WatchClass(DS, 2, 0, 65);
-    RemoveCourse(DS, 1);
-    int courses[15] = {0};
-    int classes[15] = {0};
+
+    int courses[7] = {0};
+    int classes[7] = {0};
     GetMostViewedClasses(DS, 5, courses, classes);
+    for (int i = 0; i < 7; ++i) {
+        cout << "Course : " << courses[i] << " | Lecture : " << classes[i] << endl;
+    }
     Quit(&DS);
     //////////
 //   AVLTree<int> test_order;
