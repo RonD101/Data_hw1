@@ -18,7 +18,7 @@ public:
     AVLNode<Course>* getCoursePtr() const { return course_ptr; }
 
     bool operator<(const EmptyCourse& data) const {
-        return courseID < data.courseID;
+        return courseID > data.courseID;
     }
     bool operator>(const EmptyCourse& data) const {
         return (data < *this);

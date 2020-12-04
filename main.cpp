@@ -36,16 +36,25 @@ int main() {
 
     ////////
     auto* DS = Init();
-    AddCourse(DS, 2, 5);
+    AddCourse(DS, 2, 20);
+    AddCourse(DS, 6, 7);
+    AddCourse(DS, 5, 8);
+    AddCourse(DS, 9, 13);
     AddCourse(DS, 1, 10);
     WatchClass(DS, 2, 3, 14);
     WatchClass(DS, 2, 1, 5);
     WatchClass(DS, 2, 4, 13);
-//    WatchClass(DS, 1, 2, 5);
-//    RemoveCourse(DS, 1);
-//    int courses[15] = {0};
-//    int classes[15] = {0};
-//    GetMostViewedClasses(DS, 5, courses, classes);
+    RemoveCourse(DS, 2);
+    WatchClass(DS, 1, 2, 5);
+    WatchClass(DS, 9, 6, 55);
+    WatchClass(DS, 2, 12, 59);
+    WatchClass(DS, 2, 7, 59);
+    WatchClass(DS, 6, 1, 65);
+    WatchClass(DS, 2, 0, 65);
+    RemoveCourse(DS, 1);
+    int courses[15] = {0};
+    int classes[15] = {0};
+    GetMostViewedClasses(DS, 5, courses, classes);
     Quit(&DS);
     //////////
 //   AVLTree<int> test_order;
