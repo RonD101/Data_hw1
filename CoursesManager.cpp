@@ -82,7 +82,7 @@ StatusType CoursesManager::TimeViewed(int courseID, int classID, int *timeViewed
     Course temp_course(courseID);
     AVLNode<Course>* temp = course_tree.find_value(course_tree.get_root(), temp_course);
     // no course with such id.
-    if(temp != nullptr && classID >= temp->data.lectures.size())
+    if(temp != nullptr && classID + 1 > temp->data.lectures.size())
         return INVALID_INPUT;
 
     // no class with such id.

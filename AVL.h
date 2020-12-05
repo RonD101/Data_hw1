@@ -120,7 +120,7 @@ AVLNode<T>* AVLTree<T>::insert_value(const T& value) {
 
 
 template <class T>
-AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root,const T& value, AVLNode<T>* new_node) {
+AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root, const T& value, AVLNode<T>* new_node) {
 
     //AVLNode<T>* new_node = nullptr;
     if(root->get_value() == value)
@@ -163,6 +163,8 @@ AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root,const T& value, AVLNode<T>*
     balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
     root->set_balanced_factor(balance);
     root->set_height(max(get_tree_height(root->get_left()), get_tree_height(root->get_right())) + 1);
+    new_node->set_height(max(get_tree_height(new_node->get_left()), get_tree_height(new_node->get_right())) + 1);
+    new_node->set_balanced_factor(get_tree_height(new_node->get_left()) - get_tree_height(new_node->get_right()));
     return new_node;
 }
 
@@ -307,7 +309,7 @@ bool AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
     if(temp_node == my_root) { //the node we removing is the root
         temp_node = remove_root();
         nodes_counter++; // because remove_root already update the node_counter
-    } else if(left == nullptr && right == nullptr) //we removing a leaf
+    } else if(left == nullptr && right == nullptr) // we removing a leaf
         temp_node = remove_leaf(temp_node);
     else if(left == nullptr || right == nullptr)  // we removing a node with one child
         temp_node = remove_node_with_one_child(temp_node);
@@ -331,7 +333,7 @@ AVLNode<T>* remove_leaf(AVLNode<T>* node, bool delete_node) {
      // we are left child
      if(node->get_parent()->get_left() == node)
          node->get_parent()->set_left(nullptr);
-     else // we are tight child
+     else // we are right child
         node->get_parent()->set_right(nullptr);
      if (delete_node)
          delete node;
@@ -353,6 +355,7 @@ static AVLNode<T>* remove_node_with_one_child(AVLNode<T>* node, bool delete_node
             right->set_parent(node->get_parent());
             if (delete_node)
                 delete node;
+            //return parent;
             return parent;
         }
         else { // we have left child.
@@ -360,6 +363,7 @@ static AVLNode<T>* remove_node_with_one_child(AVLNode<T>* node, bool delete_node
             left->set_parent(node->get_parent());
             if (delete_node)
                 delete node;
+            //return parent;
             return parent;
         }
     }
@@ -369,6 +373,7 @@ static AVLNode<T>* remove_node_with_one_child(AVLNode<T>* node, bool delete_node
             right->set_parent(node->get_parent());
             if (delete_node)
                 delete node;
+            //return parent;
             return parent;
         }
         else { // we have left child.
@@ -376,7 +381,8 @@ static AVLNode<T>* remove_node_with_one_child(AVLNode<T>* node, bool delete_node
             left->set_parent(node->get_parent());
             if (delete_node)
                 delete node;
-            return parent;
+           // return parent;
+           return parent;
         }
     }
 }
@@ -513,6 +519,7 @@ AVLNode<T>* AVLTree<T>::balance_sub_tree(AVLNode<T>* root) {
         right->set_balanced_factor(balance);
         right->set_height(max(get_tree_height(right->get_left()), get_tree_height(right->get_right())) + 1);
     }
+
     balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
     root->set_balanced_factor(balance);
     root->set_height(max(get_tree_height(root->get_left()), get_tree_height(root->get_right())) + 1);
