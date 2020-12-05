@@ -35,6 +35,7 @@ StatusType CoursesManager::RemoveCourse(int courseID) {
         watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), temp_lecture);
     }
 
+    strongest_lecture = watched_lecture_tree.find_max(watched_lecture_tree.get_root());
     lectures_counter -= course_to_remove->data.lectures.size();
     course_tree.delete_value(course_tree.get_root(), course_to_remove->data);
     return SUCCESS;
@@ -53,8 +54,12 @@ StatusType CoursesManager::WatchClass(int courseID, int classID, int time) {
 
     int old_time_viewed = temp_node->data.lectures[classID].timed_watched;
     // remove old lecture from watched tree and insert the new one (with the updated time).
-    if(old_time_viewed > 0)
-        watched_lecture_tree.delete_value(watched_lecture_tree.get_root(), ViewData(courseID,classID, old_time_viewed));
+    if(old_time_viewed > 0) {
+        if(strongest_lecture->data == ViewData(courseID,classID,old_time_viewed))
+            strongest_lecture = nullptr;
+        watched_lecture_tree.delete_value(watched_lecture_tree.get_root(),ViewData(courseID, classID, old_time_viewed));
+
+    }
     watched_lecture_tree.insert_value(ViewData(courseID, classID, old_time_viewed + time));
     temp_node->data.lectures[classID].add_time(time);
 

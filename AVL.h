@@ -112,6 +112,10 @@ AVLNode<T>* AVLTree<T>::insert_value(const T& value) {
         return new_node;
     }
     else {
+        auto node = find_value(my_root,value);
+        if(node != nullptr){
+            return node;
+        }
        AVLNode<T>* new_node = new AVLNode<T>(value);
 
         return (insert_node(my_root,value, new_node));
@@ -121,8 +125,6 @@ AVLNode<T>* AVLTree<T>::insert_value(const T& value) {
 
 template <class T>
 AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root, const T& value, AVLNode<T>* new_node) {
-
-    //AVLNode<T>* new_node = nullptr;
     if(root->get_value() == value)
         return root;
     else if(value < root->get_value()) {
@@ -240,6 +242,8 @@ int AVLTree<T>::get_tree_height(AVLNode<T>* root) const {
 
 template <class T>
 int AVLTree<T>::get_balance_factor(AVLNode<T>* current_node) const {
+    if(current_node == nullptr)
+        return 0;
     return current_node->get_balance_factor();
 }
 
@@ -405,11 +409,13 @@ AVLNode<T>* AVLTree<T>::remove_node_with_two_child(AVLNode<T>* node, bool delete
             node->get_parent()->set_right(next_in_order);
         next_in_order->set_left(left);
         left->set_parent(next_in_order);
+        next_in_order->set_right(node->get_right());
+        if(node->get_right()!= nullptr)
+            node->get_right()->set_parent(next_in_order);
         if(delete_node)
             delete node;
         return next_in_order;
     }
-
     next_in_order->get_parent()->set_left(next_in_order->get_right());
     if(next_in_order->get_right() != nullptr)
         next_in_order->get_right()->set_parent(next_in_order->get_parent());

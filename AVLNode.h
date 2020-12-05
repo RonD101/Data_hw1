@@ -1,9 +1,7 @@
 #ifndef HW1_AVLNODE_H
 #define HW1_AVLNODE_H
 
-//static int max(int a, int b) {
-//    return (a > b) ? a : b;
-//}
+
 
 template <class T>
 class AVLNode {
