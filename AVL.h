@@ -5,6 +5,12 @@
 #include "AVLNode.h"
 #include "Node.h"
 
+
+template <class T>
+static int max(T a, T b) {
+    return (a > b) ? a : b;
+}
+
 template<class T>
 static AVLNode<T>* remove_leaf(AVLNode<T>* node, bool delete_node = true);
 
@@ -39,6 +45,13 @@ private:
 
         int get_balance_factor(AVLNode<T>* current_node) const;
         int get_tree_height(AVLNode<T>* root) const;
+        static void update_height_and_balanced(AVLNode<T>* node){
+            if(node == nullptr)
+                return;
+            int balance = AVLNode<T>::get_height(node->get_left()) - AVLNode<T>::get_height(node->get_right());
+            node->set_balanced_factor(balance);
+            node->set_height(max(AVLNode<T>::get_height(node->get_left()), AVLNode<T>::get_height(node->get_right())) + 1);
+        }
 };
 
 template <class T>
@@ -105,10 +118,6 @@ AVLNode<T>* AVLTree<T>::insert_value(const T& value) {
     }
 }
 
-template <class T>
-static int max(T a, T b) {
-    return (a > b) ? a : b;
-}
 
 template <class T>
 AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root,const T& value, AVLNode<T>* new_node) {
@@ -150,6 +159,7 @@ AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root,const T& value, AVLNode<T>*
             rotate_right(root->get_right());
         rotate_left(root);
     }
+
     balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
     root->set_balanced_factor(balance);
     root->set_height(max(get_tree_height(root->get_left()), get_tree_height(root->get_right())) + 1);
@@ -238,8 +248,7 @@ AVLNode<T>* AVLTree<T>::rotate_left(AVLNode<T>* current_node) {
     current_node->set_right(new_root->get_left());
     if(new_root->get_left())
         (new_root->get_left())->set_parent(current_node);
-    new_root->set_left(current_node);
-
+    current_node->set_right(new_root->get_left()); /////
     if(current_node->get_parent() == nullptr) {
         my_root = new_root;
         new_root->set_parent(nullptr);
@@ -251,7 +260,9 @@ AVLNode<T>* AVLTree<T>::rotate_left(AVLNode<T>* current_node) {
             current_node->get_parent()->set_right(new_root);
         new_root->set_parent(current_node->get_parent());
     }
+    new_root->set_left(current_node);
     current_node->set_parent(new_root);
+    AVLTree<T>::update_height_and_balanced(current_node); /////
     return new_root;
 }
 
@@ -263,8 +274,7 @@ AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
     current_node->set_left(new_root->get_right());
     if(new_root->get_right())
         (new_root->get_right())->set_parent(current_node);
-    new_root->set_right(current_node);
-
+    current_node->set_left(new_root->get_right());/////////
     // Adjust tree
     if(current_node->get_parent() == nullptr) {
         my_root = new_root;
@@ -277,7 +287,9 @@ AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
             current_node->get_parent()->set_right(new_root);
         new_root->set_parent(current_node->get_parent());
     }
+    new_root->set_right(current_node);
     current_node->set_parent(new_root);
+    AVLTree<T>::update_height_and_balanced(current_node);////////
     return new_root;
 }
 
@@ -486,6 +498,20 @@ AVLNode<T>* AVLTree<T>::balance_sub_tree(AVLNode<T>* root) {
         if(get_balance_factor(root->get_right()) > 0) // RL rotation needed.
             rotate_right(root->get_right());
         rotate_left(root);
+    }
+
+    //we update the height and balanced factor of the node and its childs after the roll
+    auto left = root->get_left();
+    auto right = root->get_right();
+    if(left != nullptr){
+        balance = get_tree_height(left->get_left()) - get_tree_height(left->get_right());
+        left->set_balanced_factor(balance);
+        left->set_height(max(get_tree_height(left->get_left()), get_tree_height(left->get_right())) + 1);
+    }
+    if(right != nullptr){
+        balance = get_tree_height(right->get_left()) - get_tree_height(right->get_right());
+        right->set_balanced_factor(balance);
+        right->set_height(max(get_tree_height(right->get_left()), get_tree_height(right->get_right())) + 1);
     }
     balance = get_tree_height(root->get_left()) - get_tree_height(root->get_right());
     root->set_balanced_factor(balance);
