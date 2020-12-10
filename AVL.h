@@ -87,6 +87,11 @@ AVLTree<T>::~AVLTree() {
         delete_node(my_root);
 }
 
+/***
+ *
+ * @tparam T
+ * @param node
+ */
 template <class T>
 void AVLTree<T>::delete_node(AVLNode<T>* node) {
 
@@ -122,7 +127,14 @@ AVLNode<T>* AVLTree<T>::insert_value(const T& value) {
     }
 }
 
-
+/***
+ *
+ * @tparam T
+ * @param root
+ * @param value
+ * @param new_node
+ * @return the new node that we inserted
+ */
 template <class T>
 AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root, const T& value, AVLNode<T>* new_node) {
     if(root->get_value() == value)
@@ -170,6 +182,11 @@ AVLNode<T>* AVLTree<T>::insert_node(AVLNode<T>* root, const T& value, AVLNode<T>
     return new_node;
 }
 
+/***
+ *
+ * @tparam T
+ * @param root
+ */
 template <class T>
 void AVLTree<T>::in_order(AVLNode<T>* root) const {
 
@@ -182,6 +199,15 @@ void AVLTree<T>::in_order(AVLNode<T>* root) const {
     }
 }
 
+/***
+ *
+ * @tparam T
+ * @param root
+ * @param remained
+ * @param counted
+ * @param courses
+ * @param classes
+ */
 template <class T>
 void AVLTree<T>::reverse_in_order(AVLNode<T>* root, int* remained, int* counted, int *courses, int *classes) const {
 
@@ -198,6 +224,15 @@ void AVLTree<T>::reverse_in_order(AVLNode<T>* root, int* remained, int* counted,
     }
 }
 
+/***
+ *
+ * @tparam T
+ * @param root
+ * @param remained
+ * @param counted
+ * @param courses
+ * @param classes
+ */
 template<class T>
 void AVLTree<T>::reverse_in_order_empty(AVLNode<T> *root, int *remained, int *counted, int *courses, int *classes) const {
 
@@ -218,6 +253,13 @@ void AVLTree<T>::reverse_in_order_empty(AVLNode<T> *root, int *remained, int *co
     }
 }
 
+/***
+ *
+ * @tparam T
+ * @param root
+ * @param value
+ * @return pointer to the node with the wanted value
+ */
 template <class T>
 AVLNode<T>* AVLTree<T>::find_value(AVLNode<T>* root, const T& value) const {
 
@@ -247,6 +289,12 @@ int AVLTree<T>::get_balance_factor(AVLNode<T>* current_node) const {
     return current_node->get_balance_factor();
 }
 
+/***
+ *
+ * @tparam T
+ * @param current_node
+ * @return the root of the new  sub_tree
+ */
 template <class T>
 AVLNode<T>* AVLTree<T>::rotate_left(AVLNode<T>* current_node) {
 
@@ -272,6 +320,12 @@ AVLNode<T>* AVLTree<T>::rotate_left(AVLNode<T>* current_node) {
     return new_root;
 }
 
+/***
+ *
+ * @tparam T
+ * @param current_node
+ * @return the root  of the new sub_tree
+ */
 template <class T>
 AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
 
@@ -299,6 +353,13 @@ AVLNode<T>* AVLTree<T>::rotate_right(AVLNode<T>* current_node) {
     return new_root;
 }
 
+/***
+ *
+ * @tparam T
+ * @param root
+ * @param value
+ * @return true if we did remove a node
+ */
 template <class T>
 bool AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
 
@@ -330,6 +391,13 @@ bool AVLTree<T>::delete_value(AVLNode<T>* root, const T &value) {
     return true; // removed succeed.
 }
 
+/***
+ *
+ * @tparam T
+ * @param node
+ * @param delete_node
+ * @return the node to start the rolls from
+ */
 template<class T>
 AVLNode<T>* remove_leaf(AVLNode<T>* node, bool delete_node) {
 
@@ -344,6 +412,13 @@ AVLNode<T>* remove_leaf(AVLNode<T>* node, bool delete_node) {
     return parent;
 }
 
+/***
+ *
+ * @tparam T
+ * @param node
+ * @param delete_node
+ * @return the node to start the rolls from
+ */
 template<class T>
 static AVLNode<T>* remove_node_with_one_child(AVLNode<T>* node, bool delete_node) {
 
@@ -391,6 +466,13 @@ static AVLNode<T>* remove_node_with_one_child(AVLNode<T>* node, bool delete_node
     }
 }
 
+/**
+ *
+ * @tparam T
+ * @param node
+ * @param delete_node
+ * @return the node to start thr rolls from
+ */
 template<class T>
 AVLNode<T>* AVLTree<T>::remove_node_with_two_child(AVLNode<T>* node, bool delete_node) {
 
@@ -435,6 +517,11 @@ AVLNode<T>* AVLTree<T>::remove_node_with_two_child(AVLNode<T>* node, bool delete
     return Node_to_fix_roll_from;
 }
 
+/***
+ *
+ * @tparam T
+ * @return pointer to the new root
+ */
 template<class T>
 AVLNode<T> *AVLTree<T>::remove_root() {
 
@@ -496,6 +583,12 @@ AVLNode<T> *AVLTree<T>::remove_root() {
     }
 }
 
+/***
+ *
+ * @tparam T
+ * @param root
+ * @return hte node to start the rolls from
+ */
 template<class T>
 AVLNode<T>* AVLTree<T>::balance_sub_tree(AVLNode<T>* root) {
 
